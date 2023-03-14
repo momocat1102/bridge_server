@@ -1,0 +1,95 @@
+<html>
+    <head>
+        <style>
+            /* 外层容器 */
+            .circle{
+                width: 10px;
+                height: 10px;
+                background: black;
+                border-radius: 5px;
+                position: absolute;
+                left: 6.3px;
+                z-index: 10;
+            }
+ 
+            .circle:before{
+                content: "";
+                width: 10px;
+                height: 10px;
+                background: black;
+                border-radius: 5px;
+                position: absolute;
+                left: -6px;
+                top: 8px;
+                z-index: 10;
+            }
+            .circle:after{
+                content: "";
+                width: 10px;
+                height: 10px;
+                background: black;
+                border-radius: 5px;
+                position: absolute;
+                left: 6px;
+                top: 8px;
+                z-index: 10;
+            }
+            .triangle{
+                width: 0;
+                height:0;
+                border-left: 7.5px solid transparent;
+                border-right: 7.5px solid transparent;
+                border-bottom: 10.5px solid black;
+                position: absolute;
+                top: 4.0px;
+                left: 3.8px;
+                z-index: 10;
+            }
+ 
+            .base{
+                background: none repeat scroll 0 0 black;
+                height: 7px;
+                position: absolute;
+                left: 0;
+                top: 14px;
+                width: 20px;
+                z-index: 0;
+            }
+            .base::before{
+                width: 0px;
+                height: 1px;
+                position: absolute;
+                left: 0;
+                content: "";
+                border-left: 5px solid transparent;
+                border-right: 5px solid transparent;
+                border-top: 1px solid white;
+                border-bottom: 5px solid white;
+                border-top-left-radius: 0px;
+                border-top-right-radius: 0px;
+                border-bottom-left-radius: 0px;
+                border-bottom-right-radius: 6px;
+            }
+            .base::after{
+                width: 0px;
+                height: 1px;
+                position: absolute;
+                left: 12.5px;
+                content: "";
+                border-left: 5px solid white;
+                border-right: 5px solid white;
+                border-top: 1px solid white;
+                border-bottom: 5px solid white;
+                border-top-left-radius: 0px;
+                border-top-right-radius: 0px;
+                border-bottom-left-radius: 6px;
+                border-bottom-right-radius: 0px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="circle"></div>
+        <div class="triangle"></div>
+        <div class="base"></div>
+    </body>
+</html>

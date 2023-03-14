@@ -1,0 +1,37 @@
+{
+  "files": {
+    "main.css": "/static/css/main.30953fb8.chunk.css",
+    "main.js": "/static/js/main.89120c39.chunk.js",
+    "main.js.map": "/static/js/main.89120c39.chunk.js.map",
+    "runtime-main.js": "/static/js/runtime-main.4a393f75.js",
+    "runtime-main.js.map": "/static/js/runtime-main.4a393f75.js.map",
+    "static/js/2.77d7a522.chunk.js": "/static/js/2.77d7a522.chunk.js",
+    "static/js/2.77d7a522.chunk.js.map": "/static/js/2.77d7a522.chunk.js.map",
+    "index.html": "/index.html",
+    "static/css/main.30953fb8.chunk.css.map": "/static/css/main.30953fb8.chunk.css.map",
+    "static/js/2.77d7a522.chunk.js.LICENSE.txt": "/static/js/2.77d7a522.chunk.js.LICENSE.txt",
+    "static/media/AIGamePlatform.zip": "/static/media/AIGamePlatform.0ce38589.zip",
+    "static/media/download_CPlusPlus.md": "/static/media/download_CPlusPlus.951cbeb6.md",
+    "static/media/download_Java.md": "/static/media/download_Java.575d2b28.md",
+    "static/media/download_Python.md": "/static/media/download_Python.627e5278.md",
+    "static/media/feedback.md": "/static/media/feedback.dd846294.md",
+    "static/media/game_rule.md": "/static/media/game_rule.079f8770.md",
+    "static/media/logo.ico": "/static/media/logo.aee65b30.ico",
+    "static/media/protocol.md": "/static/media/protocol.fc6bce76.md",
+    "static/media/rule1.jpg": "/static/media/rule1.70371036.jpg",
+    "static/media/rule2.jpg": "/static/media/rule2.e10b30e2.jpg",
+    "static/media/rule3.jpg": "/static/media/rule3.7f208cc8.jpg",
+    "static/media/rule4.jpg": "/static/media/rule4.ec4a6612.jpg",
+    "static/media/rule5.jpg": "/static/media/rule5.528afbe2.jpg",
+    "static/media/rule6.jpg": "/static/media/rule6.3c8568a2.jpg",
+    "static/media/sample.zip": "/static/media/sample.a1038d59.zip",
+    "static/media/sample_GUI.zip": "/static/media/sample_GUI.1597a629.zip",
+    "static/media/sample_dl.zip": "/static/media/sample_dl.c0668a41.zip"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.4a393f75.js",
+    "static/js/2.77d7a522.chunk.js",
+    "static/css/main.30953fb8.chunk.css",
+    "static/js/main.89120c39.chunk.js"
+  ]
+}
