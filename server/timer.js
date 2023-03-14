@@ -42,6 +42,7 @@ class Timer {
             this.callback(0);
         }
     };
-}
 
+}
+//asdfghjk
 module.exports = { Timer: Timer };
