@@ -11,6 +11,22 @@ const events = require('events');
 const { resolve } = require("path");
 const em = new events.EventEmitter();
 
+const READY = 0;
+const RESET = 1;
+const DEAL = 2;
+const CALL = 3;
+const CALL_RESULT = 4;
+const CHANGE_FIRST = 5;
+const CHANGE_SECOND = 6;
+const CHANGE_RESULT = 7;
+const PLAY_CARD_FIRST = 8;
+const PLAY_CARD_SECOND = 9;
+const PLAY_CARD_RESULT = 10;
+const GAME_OVER = 11;
+const CHANGE_FINAL = 12;
+const TEST = 13;
+const PHASE_AND_PLAYER_STATUS = 14;
+
 class game{
     static CANCEL_OUT_OF_TIME = 0;
     static CANCEL_RESTART_GAME = 1;
@@ -279,17 +295,17 @@ class game{
 
             let data_send = undefined;
             switch(id){
-                case 0 : // ready
+                case READY :
                     data_send = {
                         id: id
                     };
                     break;
-                case 1 : // reset
+                case RESET :
                     data_send = {
                         id: id
                     };
                     break;
-                case 2 : // deal
+                case DEAL : // deal
                     data_send = {
                         id: id,
                         data: {
@@ -297,7 +313,7 @@ class game{
                         }
                     };
                     break;
-                case 3 : // call
+                case CALL : // call
                     data_send = {
                         id: id,
                         data: {
@@ -305,7 +321,7 @@ class game{
                         }
                     };
                     break;
-                case 4 : // call_result
+                case CALL_RESULT : // call_result
                     data_send = {
                         id: id,
                         data: {
@@ -313,7 +329,7 @@ class game{
                         }
                     };
                     break;
-                case 5 : // change_first
+                case CHANGE_FIRST : // change_first
                     data_send = {
                         id: id,
                         data: {
@@ -321,7 +337,7 @@ class game{
                         }
                     };
                     break;
-                case 6 : // change_second
+                case CHANGE_SECOND : // change_second
                     data_send = {
                         id: id,
                         data: {
@@ -330,7 +346,7 @@ class game{
                         }
                     };
                     break;
-                case 7 : // change_result
+                case CHANGE_RESULT : // change_result
                     data_send = {
                         id: id,
                         data: {
@@ -339,12 +355,12 @@ class game{
                         }
                     };
                     break;
-                case 8 : // play_card_first
+                case PLAY_CARD_FIRST : // play_card_first
                     data_send = {
                         id: id,
                     };
                     break;
-                case 9 : // play_card_second
+                case PLAY_CARD_SECOND : // play_card_second
                     data_send = {
                         id: id,
                         data: {
@@ -352,7 +368,7 @@ class game{
                         }
                     };
                     break;
-                case 10 : // play_card_result
+                case PLAY_CARD_RESULT : // play_card_result
                     data_send = {
                         id: id,
                         data: {
@@ -361,22 +377,22 @@ class game{
                         }
                     };
                     break;
-                case 11: // game_over
+                case GAME_OVER: // game_over
                     data_send = {
                         id: id,
                     };
                     break;
-                case 12: // change_finall
+                case CHANGE_FINAL: // change_finall
                     data_send = {
                         id: id
                     };
                     break;
-                case 13: // test
+                case TEST: // test
                     data_send = {
                         id: id
                     };
                     break;
-                case 14: // 傳送目前階段及先後手
+                case PHASE_AND_PLAYER_STATUS: // 傳送目前階段及先後手
                     data_send = {
                         id: id,
                         state: in_data[0],
