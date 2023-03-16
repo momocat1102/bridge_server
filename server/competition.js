@@ -25,8 +25,21 @@ class Competition {
         this.viewers = {};
         this.games = {};
         this.game_tree = undefined;
+        this.reconnect_promise = {};
         this.scoreboard = new Map();
         this.hist = { players: [], games: {}, scoreboard: {}, game_tree: [] };
+    }
+    
+    add_reconnect_promise = (player_id) => {
+        return new Promise((resolve, reject) => {
+            console.log("add_reconnect_promise")
+            console.log(this.reconnect_promise)
+            if (this.reconnect_promise[player_id] === undefined) {
+                this.reconnect_promise[player_id] = [resolve];
+            } else {
+                this.reconnect_promise[player_id].push(resolve);
+            }
+        })
     }
 
     add_player = (name, socket) => {
@@ -37,7 +50,7 @@ class Competition {
                 socket.on("close", () => {
                     if (this.players[name] !== undefined) {
                         this.delete_player(name);
-                        console.log("斷線" + name);
+                        // console.log("斷線" + name);
                     }
                 });
                 setInterval(() => {
@@ -79,12 +92,11 @@ class Competition {
                         this.games[game_id].p2.socket = socket;
                     }
                     console.log(this.games[game_id].reconnect_promise);
-                    if (
-                        Object.keys(this.games[game_id].reconnect_promise).includes(name)
-                    ) {
-                        this.games[game_id].reconnect_promise[name].resolve(socket);
-                        delete this.games[game_id].reconnect_promise[name];
-                        console.log(this.games[game_id].reconnect_promise);
+                    if (Object.keys(this.reconnect_promise).includes(name)) {
+                        this.reconnect_promise[name].forEach((resolve) => {
+                            resolve(socket);
+                        });
+                        delete this.reconnect_promise[name];                        
                     }
                 });
             }
@@ -252,6 +264,7 @@ class Competition {
                             this.push_hist,
                             this.viewers,
                             this.update_scoreboard,
+                            this.add_reconnect_promise,
                             game_num
                         );
                         // running_games[player_name_i + "_" + player_name_j] =
@@ -267,6 +280,7 @@ class Competition {
                             this.push_hist,
                             this.viewers,
                             this.update_scoreboard,
+                            this.add_reconnect_promise,
                             game_num
                         );
                         console.log(cardlist);

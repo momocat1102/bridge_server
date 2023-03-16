@@ -39,6 +39,7 @@ class game{
         push_hist,
         viewers,
         update_scoreboard,
+        add_reconnect_promise,
         game_num
     ){
         this.game_id = game_id;
@@ -55,13 +56,14 @@ class game{
         this.p2_cards = [];
         this.p1_score = 0;
         this.p2_score = 0;
-        this.P1 = 1;
-        this.P2 = -1;
+        this.P1 = true;
+        this.P2 = false;
         this.is_end = false;
         this.hist = ""; // 紀錄
         this.push_hist = push_hist;
         this.viewers = viewers;
         this.update_scoreboard = update_scoreboard;
+        this.add_reconnect_promise = add_reconnect_promise;
         this.game_num = game_num;
         this.p1_win = 0;
         this.p2_win = 0;
@@ -220,79 +222,125 @@ class game{
         });
     }
 
-    reconnect_socket = (name, color) => {
-        let reconnect_socket_promise;
-        let p = new Promise((resolve, reject) => {
-            reconnect_socket_promise = resolve;
-        });
-        this.reconnect_promise[name] = {
-            resolve: reconnect_socket_promise,
-            color: color,
-        };
-        return p;
-    };
 
-    getdata = (player, id, in_data = null) => {
+    getdata = async(player, id, in_data = null) => {
         let socket = player.socket;
-        let cancel_request_promise;
-        let timeout = undefined;
+        let request_resolve, request_reject;
         let tag = "#斷線";
         let timer = this.current_player === this.P1 ? this.p1_timer : this.p2_timer;
         let p = new Promise(async(resole, reject) => {
-            cancel_request_promise = (cancel_id) => {
-                if (cancel_id !== game.CANCEL_OUT_OF_TIME) {
-                    this.timer.release();
-                }
-                try {
-                    clearTimeout(timeout);
-                } catch (e) {
-                    console.log(e);
-                }
-                reject(cancel_id);
-            };
+            request_resolve = resole;
+            request_reject = reject;
+        });
 
-            let disconnect_pack = async() => {
-                let timeout = setTimeout(() => {
-                    // timer.hold(request_reject)
-                }, 1000 * 60);
-                if (this.current_player === this.P1) {
-                    // this.hist[this.hist.length - 1].black.name = this.black.name + tag;
-                    Object.values(this.viewers).forEach((viewer) => {
-                        viewer.send(
-                            viewer_changeName(
-                                this.game_id,
-                                this.p1.name + tag,
-                                this.p2.name
-                            )
-                        );
-                    });
-                } else {
-                    // this.hist[this.hist.length - 1].white.name = this.white.name + tag;
-                    Object.values(this.viewers).forEach((viewer) => {
-                        viewer.send(
-                            viewer_changeName(
-                                this.game_id,
-                                this.p1.name,
-                                this.p2.name + tag
-                            )
-                        );
-                    });
-                }
-                socket = await this.reconnect_socket(player.name, this.current_player);
-                clearTimeout(timeout);
-                this.timer.release();
-                tag = "#斷線";
+        let disconnect_pack = async() => {
+            timer.release(); // 時間暫停
+            let timeout = setTimeout(() => {
+                console.log("斷線");
+                timer.hold(request_reject); // 重連失敗
+                request_reject();
+            }, 1000 * 10);
+            
+            if (this.current_player === this.P1) {
+                // this.hist[this.hist.length - 1].black.name = this.black.name + tag;
                 Object.values(this.viewers).forEach((viewer) => {
                     viewer.send(
-                        viewer_changeName(this.game_id, this.p1.name, this.p2.name)
+                        viewer_changeName(
+                            this.game_id,
+                            this.p1.name + tag,
+                            this.p2.name
+                        )
                     );
                 });
-            };
-
-            if (socket.readyState === 3) {
-                await disconnect_pack();
+            } else {
+                // this.hist[this.hist.length - 1].white.name = this.white.name + tag;
+                Object.values(this.viewers).forEach((viewer) => {
+                    viewer.send(
+                        viewer_changeName(
+                            this.game_id,
+                            this.p1.name,
+                            this.p2.name + tag
+                        )
+                    );
+                });
             }
+            socket = await this.add_reconnect_promise(player.name);
+            console.log("重連成功");
+            clearTimeout(timeout);
+            // this.timer.release();
+            // tag = "#斷線";
+            Object.values(this.viewers).forEach((viewer) => {
+                viewer.send(
+                    viewer_changeName(this.game_id, this.p1.name, this.p2.name)
+                );
+            });
+        };
 
+        let handler = (message) => {
+            try {
+                // socket.removeEventListener("message", handler);
+                let get_data = JSON.parse(message.data);
+                // console.log(get_data)
+                switch(get_data.id){
+                    case 0 : // ready
+                        break;
+                    case 2 : // deal
+                        break;
+                    case 3 : // call
+                        socket.removeEventListener("message", handler);
+                        request_resolve(get_data.player_call);
+                        break;
+                    case 4 : // call_result
+                        break;
+                    case 5 : // change_first
+                        socket.removeEventListener("message", handler);
+                        request_resolve(get_data.player_card_for_change);
+                        break;
+                    case 6 : // change_second
+                        socket.removeEventListener("message", handler);
+                        request_resolve(get_data.player_card_for_change);
+                        break;
+                    case 7 : // change_result
+                        break;
+                    case 8 : // play_card_first
+                        socket.removeEventListener("message", handler);
+                        request_resolve(get_data.player_play);
+                        break;
+                    case 9 : // play_card_second
+                        socket.removeEventListener("message", handler);
+                        request_resolve(get_data.player_play);
+                        break;
+                    case 10 : // play_card_result
+                        break;
+                    case 11: // game_over
+                        // console.log("game_over");
+                        break;
+                    case 12: // change_finall
+                        break;
+                    case 13: // test
+                        break;
+                    default:
+                        break;
+                }
+                socket.removeEventListener("message", handler);
+                socket.removeEventListener("close", handler_close);
+                request_resolve();
+                // socket.removeEventListener("close", handler_close)
+            } catch (e) {
+                console.log("game:getMove", "invalid protocol format");
+                socket.close();
+            }
+        };
+
+        let handler_close = async() => {
+            // socket.removeEventListener("message", handler);
+            socket.removeEventListener("close", handler_close);
+            timer.release();
+            await disconnect_pack();
+            init_pack();
+        };
+
+        let player_request = (id, in_data) => {
             let data_send = undefined;
             switch(id){
                 case READY :
@@ -402,94 +450,25 @@ class game{
                 default:
                     break;
             }
-            socket.send(JSON.stringify(data_send));
-            
-            // let restore_pack = () => {
-            //     socket.addEventListener("message", handler); 
-            //     socket.addEventListener("close", handler_close);
-            //     // socket.send(
-            //     //     this.player_request_data(id, data)
-            //     // );
-            //     // this.timer = new timer(this, this.current_player);
-            // };
+            return JSON.stringify(data_send);
+        }
 
-            let handler = (message) => {
-                try {
-                    // socket.removeEventListener("message", handler);
-                    let get_data = JSON.parse(message.data);
-                    // console.log(get_data)
-                    switch(get_data.id){
-                        case 0 : // ready
-                            break;
-                        case 2 : // deal
-                            break;
-                        case 3 : // call
-                            socket.removeEventListener("message", handler);
-                            resole(get_data.player_call);
-                            break;
-                        case 4 : // call_result
-                            break;
-                        case 5 : // change_first
-                            socket.removeEventListener("message", handler);
-                            resole(get_data.player_card_for_change);
-                            break;
-                        case 6 : // change_second
-                            socket.removeEventListener("message", handler);
-                            resole(get_data.player_card_for_change);
-                            break;
-                        case 7 : // change_result
-                            break;
-                        case 8 : // play_card_first
-                            socket.removeEventListener("message", handler);
-                            resole(get_data.player_play);
-                            break;
-                        case 9 : // play_card_second
-                            socket.removeEventListener("message", handler);
-                            resole(get_data.player_play);
-                            break;
-                        case 10 : // play_card_result
-                            break;
-                        case 11: // game_over
-                            break;
-                        case 12: // change_finall
-                            break;
-                        case 13: // test
-                            break;
-                        default:
-                            break;
-                    }
-                    socket.removeEventListener("message", handler);
-                    socket.removeEventListener("close", handler_close);
-                    resole();
-                    // socket.removeEventListener("close", handler_close)
-                } catch (e) {
-                    console.log("game:getMove", "invalid protocol format");
-                    socket.close();
-                }
-            };
-            let handler_close = async() => {
-                // socket.removeEventListener("message", handler);
-                socket.removeEventListener("close", handler_close);
-                timer.release();
-                // await disconnect_pack();
-                // reject();
-                resolve();
-            };
+        let init_pack = () => {
             socket.addEventListener("message", handler);
             socket.addEventListener("close", handler_close);
-            // socket.removeEventListener("message", handler);
-            // let handler_close = async() => {
-            //     socket.removeEventListener("message", handler);
-            //     socket.removeEventListener("close", handler_close);
-            //     // this.timer.release();
-            //     restore_pack();
-            // };
-            // restore_pack();
-            // resole()
-        })
-        // this.cancel_request = cancel_request_promise;
+            socket.send(
+                player_request(id, in_data)
+            );
+            timer.hold(request_reject);
+        };
+
+        if (socket.readyState === 3) {
+            console.log('socket.readyState 3');
+            await disconnect_pack();
+        }
+        init_pack();
         return p;
-    }
+    };
 
     judge_call = (call, player_number) => {
         if(call === 0){
@@ -651,175 +630,312 @@ class game{
 
     play = async(mode) => {
         await this.reset(mode);
-        return new Promise(async(resolve, reject) => {
-            // try{
-                await this.getdata(this.p1, 0);
-                await this.getdata(this.p2, 0);
-                // reset
-                
-                await this.getdata(this.p1, 1);
-                await this.getdata(this.p2, 1);
-                // 傳手牌
-                await this.getdata(this.p1, 2, this.p1_cards);
-                await this.getdata(this.p2, 2, this.p2_cards);
-                this.visual_handcards();
-                this.viewer_update();
-                // this.gg();
-                // --------------------------------------------叫牌------------------------------------------------------------
-                // 黑桃 < 紅心 < 方塊 < 梅花 < 無王, 0 1 2 3 4
-                // console.log("---------------------叫牌開始-----------------------");
-                this.hist += "---------------------叫牌開始-----------------------\n";
-                await this.call_card();
-                await this.getdata(this.p1, 4, this.old_call);
-                await this.getdata(this.p2, 4, this.old_call);
-                this.visual_trump();
-                // console.log("---------------------叫牌結束-----------------------");
-                this.hist += "---------------------叫牌結束-----------------------\n";
-                this.viewer_update();
-                // resolve();
-                // --------------------------------------------換牌------------------------------------------------------------
-                // console.log("---------------------換牌開始-----------------------");
-                this.hist += "---------------------換牌開始-----------------------\n";
-                let count = 1;
-                if(this.current_player){ // p1 first
-                    await this.getdata(this.p1, 14, ["change", "1"])
-                    await this.getdata(this.p2, 14, ["change", "0"])
-                }
-                else{ // p2 first
-                    await this.getdata(this.p2, 14, ["change", "1"])
-                    await this.getdata(this.p1, 14, ["change", "0"])
-                }
-                while(this.pilecards.length !== 0){
-                    // console.log("第" + count + "輪");
-                    this.hist += "第" + count + "輪\n";
-                    count += 1;
-                    if(this.current_player){
-                        await this.change_card(this.p1, this.p1_cards, this.p2, this.p2_cards);
+        let result;
+        try{
+            const promises_1 = [this.getdata(this.p1, 0), this.getdata(this.p2, 0), // ready
+                            this.getdata(this.p1, 1), this.getdata(this.p2, 1), // reset
+                            this.getdata(this.p1, 2, this.p1_cards), this.getdata(this.p2, 2, this.p2_cards)]; // 傳手牌
+            await Promise.all(promises_1).catch((e) => {
+                throw new Error('early stop');
+            });
+            this.visual_handcards();
+            this.viewer_update();
+            // 黑桃 < 紅心 < 方塊 < 梅花 < 無王, 0 1 2 3 4
+            // console.log("---------------------叫牌開始-----------------------");
+            this.hist += "---------------------叫牌開始-----------------------\n";
+            //--------------------------------------------叫牌------------------------------------------------------------
+            let change = true;
+            let call;
+            const promises_2 = [this.getdata(this.p1, 14, ["call", "1"]), this.getdata(this.p2, 14, ["call", "0"])];
+            await Promise.all(promises_2).catch((e) => {
+                throw new Error('early stop');
+            });
+            try {
+                call = await this.getdata(this.p1, 3, 0); // p1 先喊
+            } catch (e) {
+                throw new Error('early stop');
+            }
+            this.old_call = call;
+            // console.log(this.p1.name + "先手喊牌:" + call);
+            this.hist += this.p1.name + "先手喊牌:" + call + "\n";
+            // resolve();
+            while(call !== 0){
+                if(change){
+                    try {
+                        call = await this.getdata(this.p2, 3, call);
+                    } catch (e) {
+                        throw new Error('early stop');
                     }
-                    else{
-                        await this.change_card(this.p2, this.p2_cards, this.p1, this.p1_cards);
+                    // console.log(this.p2.name + "喊牌:" + call);
+                    this.hist += this.p2.name + "喊牌:" + call + "\n";
+                    this.judge_call(call, false);
+                }
+                else{
+                    try {
+                        call = await this.getdata(this.p1, 3, call);
+                    } catch (e) {
+                        throw new Error('early stop');
                     }
-                    // console.log();
-                    this.hist += "\n";
+                    // console.log(this.p1.name + "喊牌:" + call);
+                    this.hist += this.p1.name + "喊牌:" + call + "\n";
+                    this.judge_call(call, true);
                 }
-                // 牌組整理
-                await this.getdata(this.p1, 12);
-                await this.getdata(this.p2, 12);
-                // console.log(this.p1_cards.sort(function(a, b) {
-                //     return a - b;
-                // }))
-                // console.log(this.p2_cards.sort(function(a, b) {
-                //     return a - b;
-                // }))
-                // console.log("---------------------換牌結束-----------------------");
-                this.hist += "---------------------換牌結束-----------------------\n";
-                this.visual_handcards();
-                viewer_updateBoard(this.game_id, this.hist, [this.trump, this.dealer_win_condition - 6], this.dealer_name);
-                // // // --------------------------------------------打牌------------------------------------------------------------
-                // console.log("---------------------打牌開始-----------------------")
-                this.hist += "---------------------打牌開始-----------------------\n";
-                count = 1;
-                this.current_player = this.first_play;
-                if(this.current_player){ // p1 first
-                    await this.getdata(this.p1, 14, ["play", "1"])
-                    await this.getdata(this.p2, 14, ["play", "0"])
-                }
-                else{ // p2 first
-                    await this.getdata(this.p2, 14, ["play", "1"])
-                    await this.getdata(this.p1, 14, ["play", "0"])
-                }
-                while(this.p1_cards.length !== 0){
-                    // console.log("第" + count + "輪");
-                    this.hist += "第" + count + "輪\n";
-                    count += 1;
-                    if(this.current_player){
-                        await this.play_card(this.p1, this.p1_cards, this.p2, this.p2_cards);
-                    }
-                    else{
-                        await this.play_card(this.p2, this.p2_cards, this.p1, this.p1_cards);
-                    }
-                    // console.log(this.p1.name + ":" + this.p1_score + "  " + this.p2.name + ":" + this.p2_score)
-                    this.hist += this.p1.name + ":" + this.p1_score + "  " + this.p2.name + ":" + this.p2_score + "\n";
-                }
-                // console.log("---------------------打牌結束-----------------------");
-                this.hist += "---------------------打牌結束-----------------------\n";
-                this.viewer_update();
-                // console.log("最終比分:");
-                this.hist += "最終比分:\n";
-                await this.getdata(this.p1, 11)
-                await this.getdata(this.p2, 11)
-                // console.log(this.p1.name + ":" + this.p1_score + "  " + this.p2.name + ":" + this.p2_score);
-                this.hist += this.p1.name + ":" + this.p1_score + "  " + this.p2.name + ":" + this.p2_score + "\n";
-                let result = this.isEndGame();
-                this.is_end = true;
-                if(result === this.P1){
-                    // console.log(this.p1.name + " win");
-                    this.hist += this.p1.name + " win\n";
-                    this.push_hist(this.game_id, this.hist, this.game_num);
-                    this.p1_win += 1;
-                    this.update_scoreboard(this.p1.name, 1, this.p1_timer)
-                    // resolve(this.p1); 
+                change = !change;
+                if(call !== 0)
+                    this.old_call = call;
+            }
+            //--------------------------------------------叫牌------------------------------------------------------------
+            // await this.call_card();
+            const promises_3 = [this.getdata(this.p1, 4, this.old_call), this.getdata(this.p2, 4, this.old_call)]; // 傳叫牌結果
+            await Promise.all(promises_3).catch((e) => {
+                throw new Error('early stop');
+            });
+            this.visual_trump();
+            // console.log("---------------------叫牌結束-----------------------");
+            this.hist += "---------------------叫牌結束-----------------------\n";
+            this.viewer_update();
+            // resolve();
+            // console.log("---------------------換牌開始-----------------------");
+            this.hist += "---------------------換牌開始-----------------------\n";
+            let count = 1;
+            let promises_4;
+            if(this.current_player){ // p1 first
+                promises_4 = [this.getdata(this.p1, 14, ["change", "1"]), this.getdata(this.p2, 14, ["change", "0"])];
+            }
+            else{ // p2 first
+                promises_4 = [this.getdata(this.p2, 14, ["change", "1"]), this.getdata(this.p1, 14, ["change", "0"])];
+            }
+            await Promise.all(promises_4).catch((e) => {
+                throw new Error('early stop');
+            });
+            // --------------------------------------------換牌------------------------------------------------------------
+            while(this.pilecards.length !== 0){
+                // console.log("第" + count + "輪");
+                this.hist += "第" + count + "輪\n";
+                count += 1;
+                let first_player, second_player, first_handcards, second_handcards;
+                let first_throw_card, second_throw_card;
+                if(this.current_player){
+                    first_player = this.p1;
+                    second_player = this.p2;
+                    first_handcards = this.p1_cards;
+                    second_handcards = this.p2_cards;
+                    // await this.change_card(this.p1, this.p1_cards, this.p2, this.p2_cards);
+                    
                 }else{
-                    // console.log(this.p2.name + " win");
-                    this.hist += this.p2.name + " win\n";
-                    this.push_hist(this.game_id, this.hist, this.game_num);
-                    this.p2_win += 1;
-                    this.update_scoreboard(this.p2.name, 1, this.p2_timer)
-                    // resolve(this.p2);
+                    first_player = this.p2;
+                    second_player = this.p1;
+                    first_handcards = this.p2_cards;
+                    second_handcards = this.p1_cards;
+                    // await this.change_card(this.p2, this.p2_cards, this.p1, this.p1_cards);
                 }
-                this.viewer_update();
-                Object.values(this.viewers).forEach((viewer) => {
-                    viewer.send(
-                        viewer_updateWinTimes(
-                            this.game_id,
-                            this.p1_score,
-                            this.p2_score
-                        )
-                    );
-                    viewer.send(
-                        viewer_endGame(
-                            this.game_id,
-                            this.p1_timer.getMinute(),
-                            this.p2_timer.getMinute(),
-                            this.p1_score,
-                            this.p2_score
-                        )
-                    );
-                });
-                resolve();
-                // return;
-            // } catch (err) {
-            //     this.update_scoreboard(this.p1.name, 1, this.p1_time_limit);
-            //     this.is_end = true;
-            //     Object.values(this.viewers).forEach((viewer) => {
-            //         viewer.send(
-            //             viewer_endGame(
-            //                 this.game_id,
-            //                 Math.ceil(this.p1_time_limit / (60 * 1000)),
-            //                 Math.ceil(this.p2_time_limit / (60 * 1000)),
-            //                 0,
-            //                 0
-            //             )
-            //         );
-            //     });
-            //     console.log("PPPPPPPPPPPPPPPPPPPPPPPPPPP")
-            //     resolve();
-            // }
-        })
+                this.to_change = this.pilecards.pop();
+                // console.log("翻開的牌:" + this.visual_card(this.to_change));
+                this.hist += "翻開的牌:" + this.visual_card(this.to_change) + "\n";
+                try {
+                    first_throw_card = await this.getdata(first_player, 5, this.to_change);
+                } catch (e) {
+                    throw new Error('early stop');
+                }
+                // console.log(first_player.name + "出:" + this.visual_card(first_throw_card));
+                this.hist += first_player.name + "出:" + this.visual_card(first_throw_card) + "\n";
+                try {
+                    second_throw_card = await this.getdata(second_player, 6, [this.to_change, first_throw_card]);
+                } catch (e) {
+                    throw new Error('early stop');
+                }            
+                console.log(second_player.name + "出:" + this.visual_card(second_throw_card));
+                this.hist += second_player.name + "出:" + this.visual_card(second_throw_card) + "\n";
+                // 移除用過的牌
+                first_handcards.splice(first_handcards.indexOf(first_throw_card), 1); 
+                second_handcards.splice(second_handcards.indexOf(second_throw_card), 1);
+                // 加牌
+                // 第二張翻起來的牌
+                let for_lose_card = this.pilecards.pop();
+                if(this.cmp(first_throw_card, second_throw_card)){
+                    first_handcards.push(this.to_change);
+                    second_handcards.push(for_lose_card);
+                    try {
+                        await this.getdata(first_player, 7, [second_throw_card, this.to_change]);
+                    } catch (e) {
+                        throw new Error('early stop');
+                    }
+                    try {
+                        await this.getdata(second_player, 7, [first_throw_card, for_lose_card]);
+                    } catch (e) {
+                        throw new Error('early stop');
+                    }
+                    // console.log(first_player.name + "拿到:" + this.visual_card(this.to_change));
+                    this.hist += first_player.name + "拿到:" + this.visual_card(this.to_change) + "\n";
+                    // console.log(second_player.name + "拿到:" + this.visual_card(for_lose_card));
+                    this.hist += second_player.name + "拿到:" + this.visual_card(for_lose_card) + "\n";
+                }else{
+                    second_handcards.push(this.to_change);
+                    first_handcards.push(for_lose_card);
+                    this.current_player = !this.current_player;
+                    try {
+                        await this.getdata(first_player, 7, [second_throw_card, for_lose_card]);
+                    } catch (e) {
+                        throw new Error('early stop');
+                    }
+                    try {
+                        await this.getdata(second_player, 7, [first_throw_card, this.to_change]);
+                    } catch (e) {
+                        throw new Error('early stop');
+                    }
+                    // console.log(first_player.name + "拿到:" + this.visual_card(for_lose_card));
+                    this.hist += first_player.name + "拿到:" + this.visual_card(for_lose_card) + "\n";
+                    // console.log(second_player.name + "拿到:" + this.visual_card(this.to_change));
+                    this.hist += second_player.name + "拿到:" + this.visual_card(this.to_change) + "\n";
+                }
+                // console.log();
+                this.hist += "\n";
+            }
+            // --------------------------------------------換牌結束------------------------------------------------------------        
+            const promises_5 = [this.getdata(this.p1, 12), this.getdata(this.p2, 12)]; // 牌組整理
+            await Promise.all(promises_5).catch((e) => {
+                throw new Error('early stop');
+            });        
+            // console.log("---------------------換牌結束-----------------------");
+            this.hist += "---------------------換牌結束-----------------------\n";
+            this.visual_handcards();
+            viewer_updateBoard(this.game_id, this.hist, [this.trump, this.dealer_win_condition - 6], this.dealer_name);
+            // console.log("---------------------打牌開始-----------------------")
+            this.hist += "---------------------打牌開始-----------------------\n";
+            count = 1;
+            this.current_player = this.first_play;
+            let promises_6;
+            if(this.current_player){ // p1 first
+                promises_6 = [this.getdata(this.p1, 14, ["play", "1"]), this.getdata(this.p2, 14, ["play", "0"])];
+            }
+            else{ // p2 first
+                promises_6 = [this.getdata(this.p1, 14, ["play", "0"]), this.getdata(this.p2, 14, ["play", "1"])];
+            }
+            await Promise.all(promises_6).catch((e) => {
+                throw new Error('early stop');
+            });
+            // --------------------------------------------打牌開始------------------------------------------------------------
+            while(this.p1_cards.length !== 0){
+                // console.log("第" + count + "輪");
+                this.hist += "第" + count + "輪\n";
+                count += 1;
+                let first_player, second_player, first_handcards, second_handcards;
+                let first_throw_card, second_throw_card;
+                if(this.current_player){
+                    first_player = this.p1;
+                    second_player = this.p2;
+                    first_handcards = this.p1_cards;
+                    second_handcards = this.p2_cards;
+                }
+                else{
+                    first_player = this.p2;
+                    second_player = this.p1;
+                    first_handcards = this.p2_cards;
+                    second_handcards = this.p1_cards;
+                }
+                try {
+                    first_throw_card =  await this.getdata(first_player, 8);
+                } catch (e) {
+                    throw new Error('early stop');
+                }
+                // console.log(first_player.name + "出:" + this.visual_card(first_throw_card));。。
+                this.hist += first_player.name + "出:" + this.visual_card(first_throw_card) + "\n";
+                try {
+                    second_throw_card =  await this.getdata(second_player, 9, first_throw_card);
+                } catch (e) {
+                    throw new Error('early stop');
+                }
+                // console.log(second_player.name + "出:" + this.visual_card(second_throw_card));
+                this.hist += second_player.name + "出:" + this.visual_card(second_throw_card) + "\n";
+                // 移除用過的牌
+                first_handcards.splice(first_handcards.indexOf(first_throw_card), 1); 
+                second_handcards.splice(second_handcards.indexOf(second_throw_card), 1);
+                // 判斷輸贏(算分)
+                let first_score;
+                let second_score;
+                if(!this.cmp(first_throw_card, second_throw_card)){
+                    this.current_player = !this.current_player;
+                    first_score = 0;
+                    second_score = 1;
+                }else{
+                    first_score = 1;
+                    second_score = 0;
+                }
+                if(this.current_player)
+                    this.p1_score += 1;
+                else
+                    this.p2_score += 1;
+                try {
+                    await this.getdata(first_player, 10, [second_throw_card, first_score]);
+                } catch (e) {
+                    throw new Error('early stop');
+                }
+                try {
+                    await this.getdata(second_player, 10, [first_throw_card, second_score]);
+                } catch (e) {
+                    throw new Error('early stop');
+                }
+                // console.log(this.p1.name + ":" + this.p1_score + "  " + this.p2.name + ":" + this.p2_score)
+                this.hist += this.p1.name + ":" + this.p1_score + "  " + this.p2.name + ":" + this.p2_score + "\n";
+            }
+            // --------------------------------------------打牌結束------------------------------------------------------------
+            // console.log("---------------------打牌結束-----------------------");
+            this.hist += "---------------------打牌結束-----------------------\n";
+            this.viewer_update();
+            // console.log("最終比分:");
+            this.hist += "最終比分:\n";
+            const promises_7 = [this.getdata(this.p1, 11), this.getdata(this.p2, 11)];
+            await Promise.all(promises_7).catch((e) => {
+                throw new Error('early stop');
+            });
+            console.log("test");
+            // console.log(this.p1.name + ":" + this.p1_score + "  " + this.p2.name + ":" + this.p2_score);
+            this.hist += this.p1.name + ":" + this.p1_score + "  " + this.p2.name + ":" + this.p2_score + "\n";
+            result = this.isEndGame();
+            
+        } catch (e) {
+            result = this.current_player === this.P1 ? this.P2 : this.P1;
+            console.log("someone disconnect");
+        }
+        this.is_end = true;
+        if(result === this.P1){
+            // console.log(this.p1.name + " win");
+            this.hist += this.p1.name + " win\n";
+            this.push_hist(this.game_id, this.hist, this.game_num);
+            this.p1_win += 1;
+            this.update_scoreboard(this.p1.name, 1, this.p1_timer)
+            // resolve(this.p1); 
+        }else{
+            // console.log(this.p2.name + " win");
+            this.hist += this.p2.name + " win\n";
+            this.push_hist(this.game_id, this.hist, this.game_num);
+            this.p2_win += 1;
+            this.update_scoreboard(this.p2.name, 1, this.p2_timer)
+            // resolve(this.p2);
+        }
+        this.viewer_update();
+        Object.values(this.viewers).forEach((viewer) => {
+            viewer.send(
+                viewer_updateWinTimes(
+                    this.game_id,
+                    this.p1_score,
+                    this.p2_score
+                )
+            );
+            viewer.send(
+                viewer_endGame(
+                    this.game_id,
+                    this.p1_timer.getMinute(),
+                    this.p2_timer.getMinute(),
+                    this.p1_score,
+                    this.p2_score
+                )
+            );
+        });
+        console.log("game end");
+        resolve();
     }
 
-    // BO2 = async() =>{
-    //     return new Promise(async(resolve) => {
-    //         let p1_win = 0;
-    //         let p2_win = 0;
-    //         let game1 = await this.play();
-    //         if(game1 === this.p1)
-    //             p1_win += 1;
-    //         else
-    //             p2_win += 1;
-            
-    //     })
-    // }
 }
 
 module.exports = { game: game };
