@@ -7,9 +7,7 @@ const {
     viewer_changeName,
 } = require("./protocolTemplate.js");
 const { Timer } = require("./timer.js");
-const events = require('events');
 const { resolve } = require("path");
-const em = new events.EventEmitter();
 
 const READY = 0;
 const RESET = 1;
@@ -753,7 +751,6 @@ class game{
             // console.log("---------------------換牌開始-----------------------");
             this.hist += "---------------------換牌開始-----------------------\n";
             let count = 1;
-            let promises_4;
             if(this.current_player){ // p1 first
                 try {
                     await this.getdata(this.p1, 14, ["change", "1"]);
@@ -879,7 +876,6 @@ class game{
             this.hist += "---------------------打牌開始-----------------------\n";
             count = 1;
             this.current_player = this.first_play;
-            let promises_6;
             if(this.current_player){ // p1 first
                 try {
                     await this.getdata(this.p1, 14, ["play", "1"]);
