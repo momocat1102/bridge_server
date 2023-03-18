@@ -77,9 +77,6 @@ class game{
         this.to_change = undefined; // 一回合中先翻起來的牌(需要搶的)
         
         this.first_play = undefined; // 打牌先手
-        this.reconnect_promise = {};
-        this.cancel_request = undefined;
-        this.disconnect = false;
     }
 
     visual_trump = () => {
@@ -159,7 +156,6 @@ class game{
         this.dealer_win_condition = undefined;
         this.p1_score = 0;
         this.p2_score = 0;
-        this.disconnect = false;
         if(mode === 1){
             this.create_randomcards() // 建立新的隨機牌堆
             // 發牌
@@ -279,7 +275,7 @@ class game{
             try {
                 // socket.removeEventListener("message", handler);
                 let get_data = JSON.parse(message.data);
-                console.log(get_data)
+                // console.log(get_data)
                 switch(get_data.id){
                     case 0 : // ready
                         break;
@@ -637,8 +633,7 @@ class game{
                 p1: this.p1.name,
                 p2: this.p2.name
             },
-            hand_card: [],
-            time_limit: [],
+            hand_card: {},
             call: [],
             change: [],
             play: []
@@ -677,6 +672,12 @@ class game{
             } catch (e) {
                 throw new Error('early stop');
             }
+            // 紀錄換牌前手牌
+            this.record.hand_card.p1_call_handcards = Array.from(this.p1_cards);
+            this.record.hand_card.p2_call_handcards = Array.from(this.p2_cards);
+            // console.log(this.record)
+            // console.log(this.record.hand_card)
+            // console.log(this.record.hand_card.p1_call_handcards, this.record.hand_card.p2_call_handcards)
             this.visual_handcards();
             this.viewer_update();
             // 黑桃 < 紅心 < 方塊 < 梅花 < 無王, 0 1 2 3 4
@@ -702,6 +703,14 @@ class game{
             } catch (e) {
                 throw new Error('early stop');
             }
+            this.record.call.push({
+                player: this.p1.name,
+                call_val: call,
+                time_limit:{
+                    p1: this.p1_timer.getMinute(),
+                    p2: this.p2_timer.getMinute()
+                }
+            });
             this.old_call = call;
             // console.log(this.p1.name + "先手喊牌:" + call);
             this.hist += this.p1.name + "先手喊牌:" + call + "\n";
@@ -715,6 +724,14 @@ class game{
                     }
                     // console.log(this.p2.name + "喊牌:" + call);
                     this.hist += this.p2.name + "喊牌:" + call + "\n";
+                    this.record.call.push({
+                        player: this.p2.name,
+                        call_val: call,
+                        time_limit:{
+                            p1: this.p1_timer.getMinute(),
+                            p2: this.p2_timer.getMinute()
+                        }
+                    });
                     this.judge_call(call, false);
                 }
                 else{
@@ -725,12 +742,21 @@ class game{
                     }
                     // console.log(this.p1.name + "喊牌:" + call);
                     this.hist += this.p1.name + "喊牌:" + call + "\n";
+                    this.record.call.push({
+                        player: this.p1.name,
+                        call_val: call,
+                        time_limit:{
+                            p1: this.p1_timer.getMinute(),
+                            p2: this.p2_timer.getMinute()
+                        }
+                    });
                     this.judge_call(call, true);
                 }
                 change = !change;
                 if(call !== 0)
                     this.old_call = call;
             }
+            console.log(this.record.call)
             //--------------------------------------------叫牌------------------------------------------------------------
             // 傳送叫牌結果
             try {
@@ -746,6 +772,8 @@ class game{
             this.visual_trump();
             // console.log("---------------------叫牌結束-----------------------");
             this.hist += "---------------------叫牌結束-----------------------\n";
+            this.record.trump = [this.dealer_win_condition - 6, this.trump];
+            this.record.dealer = this.dealer_name;
             this.viewer_update();
             // resolve();
             // console.log("---------------------換牌開始-----------------------");
@@ -819,46 +847,48 @@ class game{
                 // 加牌
                 // 第二張翻起來的牌
                 let for_lose_card = this.pilecards.pop();
+                let first_player_get, second_player_get;
                 if(this.cmp(first_throw_card, second_throw_card)){
-                    first_handcards.push(this.to_change);
-                    second_handcards.push(for_lose_card);
-                    try {
-                        await this.getdata(first_player, 7, [second_throw_card, this.to_change]);
-                    } catch (e) {
-                        throw new Error('early stop');
-                    }
-                    try {
-                        await this.getdata(second_player, 7, [first_throw_card, for_lose_card]);
-                    } catch (e) {
-                        throw new Error('early stop');
-                    }
-                    // console.log(first_player.name + "拿到:" + this.visual_card(this.to_change));
-                    this.hist += first_player.name + "拿到:" + this.visual_card(this.to_change) + "\n";
-                    // console.log(second_player.name + "拿到:" + this.visual_card(for_lose_card));
-                    this.hist += second_player.name + "拿到:" + this.visual_card(for_lose_card) + "\n";
+                    first_player_get = this.to_change;
+                    second_player_get = for_lose_card;
+                    
                 }else{
-                    second_handcards.push(this.to_change);
-                    first_handcards.push(for_lose_card);
-                    this.current_player = !this.current_player;
-                    try {
-                        await this.getdata(first_player, 7, [second_throw_card, for_lose_card]);
-                    } catch (e) {
-                        throw new Error('early stop');
-                    }
-                    try {
-                        await this.getdata(second_player, 7, [first_throw_card, this.to_change]);
-                    } catch (e) {
-                        throw new Error('early stop');
-                    }
-                    // console.log(first_player.name + "拿到:" + this.visual_card(for_lose_card));
-                    this.hist += first_player.name + "拿到:" + this.visual_card(for_lose_card) + "\n";
-                    // console.log(second_player.name + "拿到:" + this.visual_card(this.to_change));
-                    this.hist += second_player.name + "拿到:" + this.visual_card(this.to_change) + "\n";
+                    first_player_get = for_lose_card;
+                    second_player_get = this.to_change;
                 }
+                first_handcards.push(first_player_get);
+                second_handcards.push(second_player_get);
+                try {
+                    await this.getdata(first_player, 7, [second_throw_card, first_player_get]);
+                } catch (e) {
+                    throw new Error('early stop');
+                }
+                try {
+                    await this.getdata(second_player, 7, [first_throw_card, second_player_get]);
+                } catch (e) {
+                    throw new Error('early stop');
+                }
+                // console.log(first_player.name + "拿到:" + this.visual_card(this.to_change));
+                this.hist += first_player.name + "拿到:" + this.visual_card(first_player_get) + "\n";
+                // console.log(second_player.name + "拿到:" + this.visual_card(for_lose_card));
+                this.hist += second_player.name + "拿到:" + this.visual_card(second_player_get) + "\n";
+                this.record.change.push({
+                    go_first: first_player.name,
+                    first_card: first_throw_card,
+                    second_card: second_throw_card,
+                    first_get: first_player_get,
+                    second_get: second_player_get,
+                    time_limit:{
+                        p1: this.p1_timer.getMinute(),
+                        p2: this.p2_timer.getMinute()
+                    }
+                })
                 // console.log();
                 this.hist += "\n";
             }
             // --------------------------------------------換牌結束------------------------------------------------------------        
+            this.record.hand_card.p1_play_handcards = Array.from(this.p1_cards);
+            this.record.hand_card.p2_play_handcards = Array.from(this.p2_cards);
             try {
                 await this.getdata(this.p1, 12);
             } catch (e) {
@@ -963,6 +993,19 @@ class game{
                 }
                 // console.log(this.p1.name + ":" + this.p1_score + "  " + this.p2.name + ":" + this.p2_score)
                 this.hist += this.p1.name + ":" + this.p1_score + "  " + this.p2.name + ":" + this.p2_score + "\n";
+                this.record.play.push({
+                    go_first: first_player.name,
+                    first_play: first_throw_card,
+                    second_play: second_throw_card,
+                    score: {
+                        p1: this.p1_score,
+                        p2: this.p2_score
+                    },
+                    time_limit: {
+                        p1: this.p1_timer.getMinute(),
+                        p2: this.p2_timer.getMinute()
+                    }
+                })
             }
             // --------------------------------------------打牌結束------------------------------------------------------------
             // console.log("---------------------打牌結束-----------------------");
@@ -989,6 +1032,9 @@ class game{
             result = this.current_player === this.P1 ? this.P2 : this.P1;
             console.log("someone disconnect");
         }
+        console.log(this.record)
+        console.log(this.record.play[this.record.play.length - 1].score)
+        console.log(this.record.play[this.record.play.length - 1].time_limit)
         this.is_end = true;
         if(result === this.P1){
             // console.log(this.p1.name + " win");
