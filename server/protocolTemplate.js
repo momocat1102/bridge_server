@@ -45,18 +45,14 @@ const viewer_removePlayer = (player_id) => {
         data: player_id,
     });
 };
-const viewer_init = (status, player_list, game_flow, trump, dealer, board_end, time_limit, win_times, scoreboard) => {
+const viewer_init = (status, player_list, record, board_end, scoreboard) => {
     return JSON.stringify({
         action: "init",
         data: {
             status: status,
             player_list: player_list,
-            game_flow: game_flow,
-            trump: trump,
-            dealer: dealer,
+            record: record,
             board_end: board_end,
-            time_limit: time_limit,
-            win_times: win_times,
             scoreboard: scoreboard,
         },
     });
@@ -67,14 +63,12 @@ const viewer_start = () => {
         action: "start"
     });
 };
-const viewer_updateBoard = (game_id, game_flow, trump, dealer) => {
+const viewer_updateBoard = (game_id, record) => {
     return JSON.stringify({
         action: "update_board",
         data: {
             game_id: game_id,
-            game_flow: game_flow,
-            trump: trump,
-            dealer: dealer
+            record: record,
         },
     });
 };
@@ -86,16 +80,16 @@ const viewer_updateBoard = (game_id, game_flow, trump, dealer) => {
 //         },
 //     });
 // };
-const viewer_updateTimeLimit = (game_id, black_time_limit, white_time_limit) => {
-    return JSON.stringify({
-        action: "update_time_limit",
-        data: {
-            game_id: game_id,
-            black_time_limit: black_time_limit,
-            white_time_limit: white_time_limit
-        },
-    });
-}
+// const viewer_updateTimeLimit = (game_id, black_time_limit, white_time_limit) => {
+//     return JSON.stringify({
+//         action: "update_time_limit",
+//         data: {
+//             game_id: game_id,
+//             black_time_limit: black_time_limit,
+//             white_time_limit: white_time_limit
+//         },
+//     });
+// }
 // const viewer_updateStoneCount = (game_id, black_stone_count, white_stone_count) => {
 //     return JSON.stringify({
 //         action: "update_stone_count",
@@ -106,16 +100,16 @@ const viewer_updateTimeLimit = (game_id, black_time_limit, white_time_limit) => 
 //         },
 //     });
 // }
-const viewer_updateWinTimes = (game_id, black_win_times, white_win_times) => {
-    return JSON.stringify({
-        action: "update_win_times",
-        data: {
-            game_id: game_id,
-            black_win_times: black_win_times,
-            white_win_times: white_win_times
-        },
-    });
-}
+// const viewer_updateWinTimes = (game_id, black_win_times, white_win_times) => {
+//     return JSON.stringify({
+//         action: "update_win_times",
+//         data: {
+//             game_id: game_id,
+//             black_win_times: black_win_times,
+//             white_win_times: white_win_times
+//         },
+//     });
+// }
 const viewer_updateScoreboard = (scoreboard) => {
     return JSON.stringify({
         action: "update_score_board",
@@ -124,15 +118,11 @@ const viewer_updateScoreboard = (scoreboard) => {
         },
     });
 }
-const viewer_endGame = (game_id, black_time_limit, white_time_limit, black_stone_count, white_stone_count) => {
+const viewer_endGame = (game_id) => {
     return JSON.stringify({
         action: "end_game",
         data: {
             game_id: game_id,
-            black_time_limit: black_time_limit,
-            white_time_limit: white_time_limit,
-            black_stone_count: black_stone_count,
-            white_stone_count: white_stone_count
         },
     });
 };
@@ -164,9 +154,9 @@ module.exports = {
     viewer_removePlayer: viewer_removePlayer,
     viewer_start: viewer_start,
     viewer_updateBoard: viewer_updateBoard,
-    viewer_updateTimeLimit: viewer_updateTimeLimit,
+    // viewer_updateTimeLimit: viewer_updateTimeLimit,
     // viewer_updateStoneCount: viewer_updateStoneCount,
-    viewer_updateWinTimes: viewer_updateWinTimes,
+    // viewer_updateWinTimes: viewer_updateWinTimes,
     viewer_updateScoreboard: viewer_updateScoreboard,
     // viewer_UpdateTree: viewer_UpdateTree,
     viewer_endCompetition: viewer_endCompetition,

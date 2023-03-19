@@ -612,8 +612,10 @@ td {
 
 .hist-stytle{
     overflow-y: auto;
+    overflow-x: auto;
     white-space: pre-wrap;
 }
+
 
 .card{
     position:relative;
@@ -624,10 +626,20 @@ td {
     border-width: 1px;
     margin: 2px;
     box-shadow: 1.5px 1.5px 1.5px 0px rgba(0, 0, 0, 0.5);
-    background-color:#53E355;
+    background-color:#17d8e2;
     z-index:1;
     /* display: flex; */
     justify-content: center;
+}
+
+.background{
+    padding: 0.5rem 0.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+    background-color: #126a13;
+    /* z-index: 0; */
 }
 /* ------------------愛心---------------------- */
 .heart{

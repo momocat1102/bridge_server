@@ -164,7 +164,7 @@ class RoundRobinLayout extends Component {
             title={""}
             model_content={
               <Board
-                black={
+                p1={
                   this.props.player_name[
                     `${this.modal_player_a}_${this.modal_player_b}`
                   ] !== undefined
@@ -172,20 +172,8 @@ class RoundRobinLayout extends Component {
                         `${this.modal_player_a}_${this.modal_player_b}`
                       ].p1
                     : this.modal_player_a
-                  // this.modal_player_a
                 }
-                black_time_limit={
-                  this.props.time_limit[
-                    `${this.modal_player_a}_${this.modal_player_b}`
-                  ].black
-                }
-                black_win_times={
-                  this.props.win_times[
-                    `${this.modal_player_a}_${this.modal_player_b}`
-                  ].black
-                  
-                }
-                white={
+                p2={
                   this.props.player_name[
                     `${this.modal_player_a}_${this.modal_player_b}`
                   ] !== undefined
@@ -193,33 +181,12 @@ class RoundRobinLayout extends Component {
                         `${this.modal_player_a}_${this.modal_player_b}`
                       ].p2
                     : this.modal_player_b
-                  // this.modal_player_b
                 }
-                white_time_limit={
-                  this.props.time_limit[
-                    `${this.modal_player_a}_${this.modal_player_b}`
-                  ].white
-                }
-                white_win_times={
-                  this.props.win_times[
-                    `${this.modal_player_a}_${this.modal_player_b}`
-                  ].white
-                }
-                game_flow={
-                  this.props.game_flow[
+                record={
+                  this.props.record[
                     `${this.modal_player_a}_${this.modal_player_b}`
                   ]
                   // `${this.modal_player_a}_${this.modal_player_b}`]
-                }
-                trump={
-                  this.props.trump[
-                    `${this.modal_player_a}_${this.modal_player_b}`
-                  ]
-                }
-                dealer={
-                  this.props.dealer[
-                    `${this.modal_player_a}_${this.modal_player_b}`
-                  ]
                 }
               ></Board>
             }

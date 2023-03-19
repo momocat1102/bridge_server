@@ -1,8 +1,8 @@
 
 const {
     viewer_endGame,
-    viewer_updateTimeLimit,
-    viewer_updateWinTimes,
+    // viewer_updateTimeLimit,
+    // viewer_updateWinTimes,
     viewer_updateBoard,
     viewer_changeName,
 } = require("./protocolTemplate.js");
@@ -152,6 +152,12 @@ class game{
         this.save_p2_cards = cardlist[1];
     }
 
+    sortcard = (arr) => {
+        return arr.sort((a, b) => {
+            return a - b;
+        });
+    }
+
     reset = async(mode = 1) => {
         this.dealer_win_condition = undefined;
         this.p1_score = 0;
@@ -163,6 +169,8 @@ class game{
                 this.p1_cards.push(this.pilecards.pop());
                 this.p2_cards.push(this.pilecards.pop());
             }
+            this.p1_cards = this.sortcard(this.p1_cards);
+            this.p2_cards = this.sortcard(this.p2_cards);
             this.save_pilecards = Array.from(this.pilecards);
             this.save_p1_cards = Array.from(this.p1_cards);
             this.save_p2_cards = Array.from(this.p2_cards);
@@ -181,20 +189,20 @@ class game{
             viewer.send(
                 viewer_changeName(this.game_id, this.p1.name, this.p2.name)
             );
-            viewer.send(
-                viewer_updateTimeLimit(
-                    this.game_id,
-                    Math.ceil(this.p1_timer.getMinute()),
-                    Math.ceil(this.p2_timer.getMinute())
-                )
-            );
-            viewer.send(
-                viewer_updateWinTimes(
-                    this.game_id,
-                    this.p1_score,
-                    this.p2_current_playerscore
-                )
-            );
+            // viewer.send(
+            //     viewer_updateTimeLimit(
+            //         this.game_id,
+            //         Math.ceil(this.p1_timer.getMinute()),
+            //         Math.ceil(this.p2_timer.getMinute())
+            //     )
+            // );
+            // viewer.send(
+            //     viewer_updateWinTimes(
+            //         this.game_id,
+            //         this.p1_score,
+            //         this.p2_current_playerscore
+            //     )
+            // );
         });
 
     } 
@@ -212,7 +220,7 @@ class game{
 
     viewer_update = () => {
         Object.values(this.viewers).forEach((viewer) => {
-            let data = viewer_updateBoard(this.game_id, this.hist, [this.trump, this.dealer_win_condition - 6], this.dealer_name)
+            let data = viewer_updateBoard(this.game_id, this.record)
             viewer.send(data);
         });
     }
@@ -756,7 +764,7 @@ class game{
                 if(call !== 0)
                     this.old_call = call;
             }
-            console.log(this.record.call)
+            // console.log(this.record.call)
             //--------------------------------------------叫牌------------------------------------------------------------
             // 傳送叫牌結果
             try {
@@ -887,6 +895,7 @@ class game{
                 this.hist += "\n";
             }
             // --------------------------------------------換牌結束------------------------------------------------------------        
+            this.viewer_update()
             this.record.hand_card.p1_play_handcards = Array.from(this.p1_cards);
             this.record.hand_card.p2_play_handcards = Array.from(this.p2_cards);
             try {
@@ -901,7 +910,6 @@ class game{
             }
             this.hist += "---------------------換牌結束-----------------------\n";
             this.visual_handcards();
-            viewer_updateBoard(this.game_id, this.hist, [this.trump, this.dealer_win_condition - 6], this.dealer_name);
             // console.log("---------------------打牌開始-----------------------")
             this.hist += "---------------------打牌開始-----------------------\n";
             count = 1;
@@ -1033,8 +1041,8 @@ class game{
             console.log("someone disconnect");
         }
         console.log(this.record)
-        console.log(this.record.play[this.record.play.length - 1].score)
-        console.log(this.record.play[this.record.play.length - 1].time_limit)
+        // console.log(this.record.play[this.record.play.length - 1].score)
+        // console.log(this.record.play[this.record.play.length - 1].time_limit)
         this.is_end = true;
         if(result === this.P1){
             // console.log(this.p1.name + " win");
@@ -1053,13 +1061,13 @@ class game{
         }
         this.viewer_update();
         Object.values(this.viewers).forEach((viewer) => {
-            viewer.send(
-                viewer_updateWinTimes(
-                    this.game_id,
-                    this.p1_score,
-                    this.p2_score
-                )
-            );
+            // viewer.send(
+            //     viewer_updateWinTimes(
+            //         this.game_id,
+            //         this.p1_score,
+            //         this.p2_score
+            //     )
+            // );
             viewer.send(
                 viewer_endGame(
                     this.game_id,

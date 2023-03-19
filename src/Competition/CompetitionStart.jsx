@@ -18,16 +18,10 @@ class CompetitionStart extends Component {
           <RoundRobinLayout
             competition_id={this.props.competition_id}
             is_login={this.props.is_login}
-            board_size={this.props.board_size}
             status={this.props.status}
             player_list={this.props.player_list}
-            game_flow={this.props.game_flow}
-            trump={this.props.trump}
-            dealer={this.props.dealer}
+            record={this.props.record}
             board_end={this.props.board_end}
-            time_limit={this.props.time_limit}
-            stone_count={this.props.stone_count}
-            win_times={this.props.win_times}
             scoreboard={this.props.scoreboard}
             history_time={this.props.history_time}
             loadHistory={this.props.loadHistory}

@@ -176,8 +176,6 @@ const ws_connect = async (
   onRemovePlayer,
   onStart,
   onUpdateBoard,
-  onUpdateTimeLimit,
-  onUpdateWinTimes,
   onUpdateScoreboard,
   onUpdateTree,
   onEndGame,
@@ -205,12 +203,8 @@ const ws_connect = async (
         onInit(
           data.data.status,
           data.data.player_list,
-          data.data.game_flow,
-          data.data.trump,
-          data.data.dealer,
+          data.data.record,
           data.data.board_end,
-          data.data.time_limit,
-          data.data.win_times,
           data.data.scoreboard,
         );
       } else if (data.action === "add_player") {
@@ -223,22 +217,7 @@ const ws_connect = async (
         // console.log(data.data.game_flow);
         onUpdateBoard(
           data.data.game_id,
-          data.data.game_flow,
-          data.data.trump,
-          data.data.dealer
-        );
-      } else if (data.action === "update_time_limit") {
-        onUpdateTimeLimit(
-          data.data.game_id,
-          data.data.black_time_limit,
-          data.data.white_time_limit
-        );
-      } else if (data.action === "update_win_times") {
-        // console.log(data)
-        onUpdateWinTimes(
-          data.data.game_id,
-          data.data.black_win_times,
-          data.data.white_win_times
+          data.data.record
         );
       } else if (data.action === "update_score_board") {
         // alert(data.data.scoreboard);

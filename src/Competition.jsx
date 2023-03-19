@@ -12,12 +12,13 @@ class Competition extends Component {
       status: "prepare",
       type: "",
       player_list: {},
-      game_flow: {},
-      trump: {},
-      dealer: {},
+      record: {},
+      // game_flow: {},
+      // trump: {},
+      // dealer: {},
       board_end: {},
-      time_limit: {},
-      win_times: {},
+      // time_limit: {},
+      // win_times: {},
       scoreboard: [],
       player_name: {},
       game_tree: undefined,
@@ -29,12 +30,8 @@ class Competition extends Component {
   onInit = (
     status,
     player_list,
-    game_flow,
-    trump,
-    dealer,
+    record,
     board_end,
-    time_limit,
-    win_times,
     scoreboard,
   ) => {
     let tmp = this.state.player_list;
@@ -46,12 +43,8 @@ class Competition extends Component {
       initialize: true,
       status: status,
       player_list: tmp,
-      game_flow: game_flow,
-      trump: trump,
-      dealer: dealer,
+      record: record,
       board_end: board_end,
-      time_limit: time_limit,
-      win_times: win_times,
       scoreboard: scoreboard,
     });
     // console.log(this.state.scoreboard)
@@ -72,31 +65,12 @@ class Competition extends Component {
       status: "start",
     });
   };
-  onUpdateBoard = (game_id, game_flow, trump, dealer) => {
-    // console.log(game_flow)
-    let tmp = this.state.game_flow;
-    tmp[game_id] = game_flow;
+  onUpdateBoard = (game_id, record) => {
+    let tmp = this.state.record;
     let tmp2 = this.state.board_end;
+    tmp[game_id] = record;
     tmp2[game_id] = false;
-    let tmp3 = this.state.trump;
-    tmp3[game_id] = trump;
-    let tmp4 = this.state.dealer;
-    tmp4[game_id] = dealer;
-    this.setState({ game_flow: tmp, board_end: tmp2, trump: tmp3, dealer: tmp4});
-    // console.log(this.state.game_flow.value)
-    // alert(this.state.game_flow.value)
-  };
-  onUpdateTimeLimit = (game_id, black_time_limit, white_time_limit) => {
-    let tmp = this.state.time_limit;
-    tmp[game_id] = { black: black_time_limit, white: white_time_limit };
-    this.setState({ time_limit: tmp });
-  };
-  onUpdateWinTimes = (game_id, black_win_times, white_win_times) => {
-    let tmp = this.state.win_times;
-    // console.log(tmp);
-    tmp[game_id] = { black: black_win_times, white: white_win_times };
-    this.setState({ win_times: tmp });
-    // console.log(this.state.win_times);
+    this.setState({ record: tmp, board_end: tmp2 });
   };
   onUpdateScoreboard = (scoreboard) => {
     this.setState({ scoreboard: scoreboard });
@@ -124,8 +98,6 @@ class Competition extends Component {
     Object.entries(data.games).map(([key, value]) => {
       tmp_history_time[key] = { time: 0, max: value.length - 1 };
       this.onUpdateBoard(key, value[0].hist);
-      this.onUpdateTimeLimit(key, value[0].black.time_limit, value[0].white.time_limit );
-      this.onUpdateWinTimes(key, value[0].black.win_times, value[0].white.win_times);
     });
     this.setState({ 
       player_list: tmp_player_list, 
@@ -141,11 +113,11 @@ class Competition extends Component {
     let tmp = this.state.history_time;
     tmp[game_id].time = time;
     this.onUpdateBoard(game_id, this.state.history[game_id][time].hist);
-    this.onUpdateTimeLimit(
-      game_id,
-      this.state.history[game_id][time].time_limit,
-      this.state.history[game_id][time].time_limit
-    );
+    // this.onUpdateTimeLimit(
+    //   game_id,
+    //   this.state.history[game_id][time].time_limit,
+    //   this.state.history[game_id][time].time_limit
+    // );
     this.onUpdateWinTimes(
       game_id,
       this.state.history[game_id][time].black.win_times,
@@ -173,8 +145,6 @@ class Competition extends Component {
           this.onRemovePlayer,
           this.onStart,
           this.onUpdateBoard,
-          this.onUpdateTimeLimit,
-          this.onUpdateWinTimes,
           this.onUpdateScoreboard,
           this.onUpdateTree,
           this.onEndGame,
@@ -199,17 +169,13 @@ class Competition extends Component {
           status={this.state.status}
           type={this.state.type}
           player_list={this.state.player_list}
-          game_flow={this.state.game_flow}
-          trump={this.state.trump}
-          dealer={this.state.dealer}
+          record={this.state.record}
           board_end={this.state.board_end}
-          time_limit={this.state.time_limit}
-          win_times={this.state.win_times}
           scoreboard={this.state.scoreboard}
           game_tree={this.state.game_tree}
           history_time={this.state.history_time}
-          player_name={this.state.player_name}
           loadHistory={this.loadHistory}
+          player_name={this.state.player_name}
         ></CompetitionStart>
       ) : (
         <CompetitionPrepare

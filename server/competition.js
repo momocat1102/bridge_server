@@ -102,6 +102,7 @@ class Competition {
             }
         }
     };
+
     delete_player = (name) => {
         let socket = this.players[name];
         socket.close();
@@ -112,6 +113,7 @@ class Competition {
             });
         }
     };
+
     add_viewer = (socket) => {
         // if not exist, add, then sent current state
         // console.log("In");
@@ -123,47 +125,50 @@ class Competition {
         setInterval(() => {
             socket.send(JSON.stringify({ action: "ping" }));
         }, 1000 * 5);
-        let game_flow = {};
-        let trump = {};
-        let dealer = {};
+        let record = {};
+        // let game_flow = {};
+        // let trump = {};
+        // let dealer = {};
         let boards_isEnd = {};
-        let time_limit = {};
-        let win_times = {};
-        console.log(this.games)
+        // let time_limit = {};
+        // let win_times = {};
+        // console.log(this.games)
         Object.keys(this.games).forEach((game_id) => {
-            game_flow[game_id] = this.games[game_id].hist;
-            trump[game_id] = [this.games[game_id].trump, this.games[game_id].dealer_win_condition - 6];
-            dealer[game_id] = this.games[game_id].dealer_name;
-            time_limit[game_id] = {
-                black: Math.ceil(this.games[game_id].black_time_limit / (60 * 1000)),
-                white: Math.ceil(this.games[game_id].white_time_limit / (60 * 1000)),
-            };
-            win_times[game_id] = {
-                black: this.games[game_id].p1_score,
-                white: this.games[game_id].p2_score,
-            };
+            // game_flow[game_id] = this.games[game_id].hist;
+            // trump[game_id] = [this.games[game_id].trump, this.games[game_id].dealer_win_condition - 6];
+            // dealer[game_id] = this.games[game_id].dealer_name;
+            // time_limit[game_id] = {
+            //     black: Math.ceil(this.games[game_id].black_time_limit / (60 * 1000)),
+            //     white: Math.ceil(this.games[game_id].white_time_limit / (60 * 1000)),
+            // };
+            // win_times[game_id] = {
+            //     black: this.games[game_id].p1_score,
+            //     white: this.games[game_id].p2_score,
+            // };
+            record[game_id] = this.games[game_id].record;
             boards_isEnd[game_id] = this.games[game_id].is_end;
         });
         console.log(
-            this.status,
-            Object.keys(this.players),
-            game_flow,
-            trump,
-            dealer,
-            boards_isEnd,
-            time_limit,
-            win_times,
+            // this.status,
+            // Object.keys(this.players),
+            // game_flow,
+            // trump,
+            // dealer,
+            // boards_isEnd,
+            // time_limit,
+            // win_times,
             this.calc_scoreboard_order(this.scoreboard));
         socket.send(
             viewer_init(
                 this.status,
                 Object.keys(this.players),
-                game_flow,
-                trump,
-                dealer,
+                record,
+                // game_flow,
+                // trump,
+                // dealer,
                 boards_isEnd,
-                time_limit,
-                win_times,
+                // time_limit,
+                // win_times,
                 this.calc_scoreboard_order(this.scoreboard),
             )
         );
@@ -174,6 +179,7 @@ class Competition {
             this.scoreboard.set(player, 0);
         });
     };
+
     sort_scoreboard = () => {
         let old_scoreboard = this.scoreboard;
         let new_scoreboard = new Map();
@@ -189,6 +195,7 @@ class Competition {
         });
         this.scoreboard = new_scoreboard;
     };
+
     update_scoreboard = (player_id, add_score, time_remain) => {
         this.scoreboard.set(player_id, this.scoreboard.get(player_id) + add_score);
         this.sort_scoreboard();
@@ -198,6 +205,7 @@ class Competition {
             );
         });
     };
+
     calc_scoreboard_order = (scoreboard) => {
         let tmp = [];
         let order = 1;
@@ -213,7 +221,6 @@ class Competition {
         }
         return tmp;
     };
-
 
     push_hist = (game_id, hist, game_num) => {
         let competition_id = this.competition_id;
@@ -254,7 +261,7 @@ class Competition {
             for (let i = 0; i < Object.keys(this.players).length; i++) {
                 for (let j = i + 1; j < Object.keys(this.players).length; j++) {
                     // 打100場
-                    for(let game_num = 1; game_num <= 10; game_num++){
+                    for(let game_num = 1; game_num <= 1; game_num++){
                         console.log("場次 " + game_num);
                         let player_name_i = Object.keys(this.players)[i];
                         let player_name_j = Object.keys(this.players)[j];
@@ -268,7 +275,7 @@ class Competition {
                             game_num
                         );
                         // running_games[player_name_i + "_" + player_name_j] =
-                        //     this.games[player_name_i + "_" + player_name_j].BO1();
+                        // this.games[player_name_i + "_" + player_name_j].BO1();
                         await this.games[player_name_i + "_" + player_name_j].play()
                             // .catch(err => {
                             //     console.log("disconnect")
