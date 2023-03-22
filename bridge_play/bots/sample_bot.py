@@ -1,5 +1,5 @@
 import random as rd
-class BaseBot:
+class SampleBot:
     def __init__(self, name="None"):
         self.name = name
         self.my_hand = []
