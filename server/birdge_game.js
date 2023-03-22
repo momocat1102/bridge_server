@@ -864,6 +864,24 @@ class game{
                     first_player_get = for_lose_card;
                     second_player_get = this.to_change;
                 }
+                this.p1_cards = this.sortcard(this.p1_cards);
+                this.p2_cards = this.sortcard(this.p2_cards);
+                this.record.change.push({
+                    go_first: first_player.name,
+                    first_card: first_throw_card,
+                    second_card: second_throw_card,
+                    first_get: first_player_get,
+                    second_get: second_player_get,
+                    time_limit:{
+                        p1: this.p1_timer.getMinute(),
+                        p2: this.p2_timer.getMinute()
+                    },
+                    hand_cards:{
+                        p1: Array.from(this.p1_cards),
+                        p2: Array.from(this.p2_cards)
+                    }
+                })
+                this.viewer_update();
                 first_handcards.push(first_player_get);
                 second_handcards.push(second_player_get);
                 try {
@@ -879,25 +897,15 @@ class game{
                 // console.log(first_player.name + "拿到:" + this.visual_card(this.to_change));
                 this.hist += first_player.name + "拿到:" + this.visual_card(first_player_get) + "\n";
                 // console.log(second_player.name + "拿到:" + this.visual_card(for_lose_card));
-                this.hist += second_player.name + "拿到:" + this.visual_card(second_player_get) + "\n";
-                this.record.change.push({
-                    go_first: first_player.name,
-                    first_card: first_throw_card,
-                    second_card: second_throw_card,
-                    first_get: first_player_get,
-                    second_get: second_player_get,
-                    time_limit:{
-                        p1: this.p1_timer.getMinute(),
-                        p2: this.p2_timer.getMinute()
-                    }
-                })
+                this.hist += second_player.name + "拿到:" + this.visual_card(second_player_get) + "\n";                
                 // console.log();
                 this.hist += "\n";
             }
             // --------------------------------------------換牌結束------------------------------------------------------------        
-            this.viewer_update()
+            // this.viewer_update();
             this.record.hand_card.p1_play_handcards = Array.from(this.p1_cards);
             this.record.hand_card.p2_play_handcards = Array.from(this.p2_cards);
+            this.viewer_update();
             try {
                 await this.getdata(this.p1, 12);
             } catch (e) {
@@ -1001,6 +1009,8 @@ class game{
                 }
                 // console.log(this.p1.name + ":" + this.p1_score + "  " + this.p2.name + ":" + this.p2_score)
                 this.hist += this.p1.name + ":" + this.p1_score + "  " + this.p2.name + ":" + this.p2_score + "\n";
+                this.p1_cards = this.sortcard(this.p1_cards);
+                this.p2_cards = this.sortcard(this.p2_cards);
                 this.record.play.push({
                     go_first: first_player.name,
                     first_play: first_throw_card,
@@ -1012,8 +1022,13 @@ class game{
                     time_limit: {
                         p1: this.p1_timer.getMinute(),
                         p2: this.p2_timer.getMinute()
+                    },
+                    hand_cards: {
+                        p1: Array.from(this.p1_cards),
+                        p2: Array.from(this.p2_cards)
                     }
                 })
+                this.viewer_update();
             }
             // --------------------------------------------打牌結束------------------------------------------------------------
             // console.log("---------------------打牌結束-----------------------");

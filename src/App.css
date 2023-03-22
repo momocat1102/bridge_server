@@ -632,6 +632,19 @@ td {
     justify-content: center;
 }
 
+.none_card{
+    position:relative;
+    text-align:left;
+    width:35px;
+    height:60px;
+    /* border-style: solid;
+    border-width: 1px; */
+    margin: 2px;
+    z-index:1;
+    /* display: flex; */
+    justify-content: center;
+}
+
 .background{
     padding: 0.5rem 0.5rem;
     display: flex;

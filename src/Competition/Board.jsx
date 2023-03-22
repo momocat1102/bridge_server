@@ -1,13 +1,14 @@
-import React, { Component } from "react";
+import React, { Component} from "react";
 import { hot } from "react-hot-loader";
-import myCardImage from './cards/1.jpg';
 
 
 class Board extends Component {
   constructor(props) {
     super(props);
     this.size = this.props.size;
-  }
+    this.state = { stage: 1, changeIndex: 0, playIndex: 0};
+    this.images = this.importAll(require.context('./cards', false, /\.(png|jpe?g|svg)$/));
+  };
 
   importAll(r) {
     let images = {};
@@ -16,62 +17,125 @@ class Board extends Component {
     });
     return images;
   }
-  ch_flower(name){
-    var flower_color = ["heart", "diamond", "spades", "plumbossom"];
-    if(name === flower_color[0]){
-      return(
-        <div className="card">
-          <div class="heart"></div>
-        </div>)
-    }
-    else if(name === flower_color[1]){
-      return(
-        <div className="card">
-          <div class="diamond"></div>
-        </div>)
-    }
-    else if(name === flower_color[2]){
-      return(
-        <div className="card">
-          <span class="spades">
-            <span class="spades_2"></span>
-          </span>
-        </div>)
-    }
-    else if(name === flower_color[3]){
-      return(
-        <div className="card">
-          <div class="plumbossom_c"></div>
-          <div class="plumbossom_t"></div>
-          <div class="plumbossom_b"></div>
-        </div>)
-    }
-    else{
-      return(<div className="card"></div>)
-    }
-  }
+  // ch_flower(name){
+  //   var flower_color = ["heart", "diamond", "spades", "plumbossom"];
+  //   if(name === flower_color[0]){
+  //     return(
+  //       <div className="card">
+  //         <div class="heart"></div>
+  //       </div>)
+  //   }
+  //   else if(name === flower_color[1]){
+  //     return(
+  //       <div className="card">
+  //         <div class="diamond"></div>
+  //       </div>)
+  //   }
+  //   else if(name === flower_color[2]){
+  //     return(
+  //       <div className="card">
+  //         <span class="spades">
+  //           <span class="spades_2"></span>
+  //         </span>
+  //       </div>)
+  //   }
+  //   else if(name === flower_color[3]){
+  //     return(
+  //       <div className="card">
+  //         <div class="plumbossom_c"></div>
+  //         <div class="plumbossom_t"></div>
+  //         <div class="plumbossom_b"></div>
+  //       </div>)
+  //   }
+  //   else{
+  //     return(<div className="card"></div>)
+  //   }
+  // }
   // "heart", "diamond", "spades", "plumbossom"
-  func(num){
+  change_card(){
+    const {
+      record
+    } = this.props;
     let divlist = [];
     let x = 0
-    for(let i = 0; i < num; i++){
-      if(i === 5){
-        divlist.push(this.ch_flower("heart"));
-        x += 2;
+    if (record.change[this.state.changeIndex] === undefined){
+      for(let i = 0; i < 13; i++){
+        divlist.push(<div className="none_card"></div>);
       }
-      else if(i === 9){
-        divlist.push(this.ch_flower("plumbossom"));
-        x += 2;
-      }
-      // else if(i === num - 1){
-      //   divlist.push(this.ch_flower("plumbossom"));
-      // }
-      else{
-        divlist.push(<div className="card" style={{right:39*(i - 1) + x}}></div>);
+    }else{
+      for(let i = 0; i < 13; i++){
+        if(i === 6){         
+          divlist.push(<div className="card">
+            <img src={this.images[record.change[this.state.changeIndex].first_card + ".jpg"].default} alt="card" width="35px" height="60px"/>
+            先手出牌
+          </div>);
+          x += 2;
+        }
+        else if(i === 9){
+          divlist.push(<div className="card">
+            <img src={this.images[record.change[this.state.changeIndex].second_card + ".jpg"].default} alt="card" width="35px" height="60px"/>
+            後手出牌
+          </div>);
+          x += 2;
+        }
+        else if(i === 4){
+          divlist.push(<div className="card">
+            <img src={this.images[record.change[this.state.changeIndex].second_get + ".jpg"].default} alt="card" width="35px" height="60px"/>
+            後手拿牌
+          </div>);
+          x += 2;
+        }
+        else if(i === 3){
+          divlist.push(<div className="card">
+            <img src={this.images[record.change[this.state.changeIndex].first_get + ".jpg"].default} alt="card" width="35px" height="60px"/>
+            先手拿牌
+          </div>);
+          x += 2;
+        }
+        else{
+          divlist.push(<div className="card" style={{right:39*(i - 1) + x}}></div>);
+        }
       }
     }
+    
     return divlist
   }
+
+  play_card(){
+    const {
+      record
+    } = this.props;
+    let divlist = [];
+    let x = 0
+    if (record.play[this.state.playIndex] === undefined){
+      for(let i = 0; i < 13; i++){
+        divlist.push(<div className="none_card"></div>);
+      }
+    }else{
+      for(let i = 0; i < 13; i++){
+        if(i === 6){         
+          divlist.push(<div className="card">
+            <img src={this.images[record.play[this.state.playIndex].first_play + ".jpg"].default} alt="card" width="35px" height="60px"/>
+            先手出牌
+          </div>);
+          x += 2;
+        }
+        else if(i === 9){
+          divlist.push(<div className="card">
+            <img src={this.images[record.play[this.state.playIndex].second_play + ".jpg"].default} alt="card" width="35px" height="60px"/>
+            後手出牌
+          </div>);
+          x += 2;
+        }
+        else{
+          divlist.push(<div className="card" style={{right:39*(i - 1) + x}}></div>);
+        }
+      }
+    }
+    
+    return divlist
+  }
+
   
   visual_handcards(player_name, hand_cards) {
     // console.log(hand_cards);
@@ -100,62 +164,154 @@ class Board extends Component {
 
   }
 
+  handleNextchange = () => {
+    this.setState(prevState => (
+      prevState.changeIndex + 1 >= 13 ? 
+      {changeIndex: 12}
+      :
+      {changeIndex: (prevState.changeIndex + 1)}
+    ));
+  };
+
+  handleBackchange = () => {
+    this.setState(prevState => (
+      prevState.changeIndex - 1 < 0 ? 
+      {changeIndex: 0}
+      :
+      {changeIndex: (prevState.changeIndex - 1)}
+    ));
+  };
+
+  handleNextplay = () => {
+    this.setState(prevState => (
+      prevState.playIndex + 1 >= 13 ? 
+      {playIndex: 12}
+      :
+      {playIndex: (prevState.playIndex + 1)}
+    ));
+  };
+
+  handleBackplay = () => {
+    this.setState(prevState => (
+      prevState.playIndex - 1 < 0 ? 
+      {playIndex: 0}
+      :
+      {playIndex: (prevState.playIndex - 1)}
+    ));
+  };
+
+  randerStage() {
+    const {
+      p1,
+      p2,
+      record
+    } = this.props;
+    let change_card = this.change_card();
+    let play_card = this.play_card();
+    // const images = this.importAll(require.context('./cards', false, /\.(png|jpe?g|svg)$/));
+    // 喊牌介面
+    if (this.state.stage === 1) {
+      return <p>這是第一階段的介面</p>;
+    // 換牌介面
+    } else if (this.state.stage === 2) {
+      return <div>
+        <button onClick={this.handleBackchange}>{"<"}</button>
+        <button onClick={this.handleNextchange}>{">"}</button>
+        {record.change[this.state.changeIndex] === undefined ?
+          <div></div>
+        :
+          <div>回合數: {this.state.changeIndex + 1}&emsp;&emsp;先手：{record.change[this.state.changeIndex].go_first}&emsp;&emsp;後手：{record.change[this.state.changeIndex].go_first === p1 ? p2 : p1}</div>
+        }
+        <div className="background">
+          {/* {console.log(record.change)} */}
+          <div className="hist-stytle"> 
+          </div>
+          <div className="board-row">
+            {record.change.length === 0 || !record.change[this.state.changeIndex] ?
+              {}
+            : 
+              record.change[this.state.changeIndex].hand_cards.p1.map((card, _) => (
+                <div className="card">
+                <img src={this.images[card + ".jpg"].default} alt="card" width="35px" height="60px"/>
+                </div>
+              ))
+            }
+          </div>
+          <div className="board-row">
+            {change_card}
+          </div>
+          <div className="board-row">
+            {record.change.length === 0 || !record.change[this.state.changeIndex] ?
+              {}
+            : 
+              record.change[this.state.changeIndex].hand_cards.p2.map((card, _) => (
+                <div className="card">
+                <img src={this.images[card + ".jpg"].default} alt="card" width="35px" height="60px"/>
+                </div>
+              ))
+            }
+          </div>
+        </div>
+      </div>
+    // 打牌介面
+    } else if (this.state.stage === 3) {
+      return <div>
+        <div style={{flexDirection: "column"}}>
+          <button onClick={this.handleBackplay}>{"<"}</button>
+          <button onClick={this.handleNextplay}>{">"}</button>
+          {record.play[this.state.playIndex] === undefined ?
+            <div></div>
+          :
+            <div>回合數: {this.state.playIndex + 1}&emsp;&emsp;先手：{record.play[this.state.playIndex].go_first}&emsp;&emsp;後手：{record.play[this.state.playIndex].go_first === p1 ? p2 : p1}</div>
+          }
+        </div>
+        <div className="background">
+        {console.log(record.play.length)}
+          <div className="hist-stytle"> 
+          </div>
+          <div className="board-row">
+            {record.play.length === 0 || !record.play[this.state.playIndex] ?
+            <div></div>
+            : 
+            record.play[this.state.playIndex].hand_cards.p1.map((card, _) => (
+              <div className="card">
+              <img src={this.images[card + ".jpg"].default} alt="card" width="35px" height="60px"/>
+              </div>
+            ))}
+          </div>
+          <div className="board-row">
+            {play_card}
+          </div>
+          <div className="board-row">
+            {record.play.length === 0 || !record.play[this.state.playIndex] ?
+            <div></div>
+            : 
+            record.play[this.state.playIndex].hand_cards.p2.map((card, _) => (
+              <div className="card">
+              <img src={this.images[card + ".jpg"].default} alt="card" width="35px" height="60px"/>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    }
+  }
+
   render() {
     const {
       p1,
       p2,
       record
     } = this.props;
-    // let p1_hand_cards;
-    // if (record.hand_card.p1_call_handcards === undefined) {
-    //   p1_hand_cards = {record.hand_card.p1_call_handcards.from(Array(13).keys()).map((_, i) => (
-    //     <div key={i} className="card">
-    //       <img src={images["3.jpg"].default} alt="card" width="35px" height="60px"/>
-    //     </div>
-    //   ))}
-    // } else {
-    //   {Array.from(Array(13).keys()).map((_, i) => (
-    //     <div key={i} className="card">
-    //       <img src={images["3.jpg"].default} alt="card" width="35px" height="60px"/>
-    //     </div>
-    //   ))}
-    // }
-    let divlist= this.func(13);
-    // let p1_call_handcards = this.visual_handcards(record.hand_card.p1_call_handcards, p1);
-    // let p2_call_handcards = this.visual_handcards(record.hand_card.p2_call_handcards, p2);
     let shape = ['黑桃', '紅心', '方塊', '梅花', '無王'];
     const images = this.importAll(require.context('./cards', false, /\.(png|jpe?g|svg)$/));
-    console.log(images);
+    // console.log(images);
     return (
       <div className="board">
-        <div className="background">
-          <div className="hist-stytle"> 
-          </div>
-          <div className="board-row">
-            {record.hand_card.p1_call_handcards.map((card, _) => (
-              <div className="card">{console.log(record.hand_card.p1_call_handcards)}
-                {record.hand_card.p1_call_handcards === undefined ? 
-                {}
-                 : <img src={images[card + ".jpg"].default} alt="card" width="35px" height="60px"/>
-                }
-              </div>
-            ))}
-          </div>
-          <div className="board-row">
-            {divlist}
-          </div>
-          <div className="board-row">
-            {record.hand_card.p2_call_handcards.map((card, _) => (
-                <div className="card">
-                  {record.hand_card.p2_call_handcards === undefined ? 
-                  {}
-                  : <img src={images[card + ".jpg"].default} alt="card" width="35px" height="60px"/>
-                  }
-                </div>
-              ))}
-          </div>
-        </div>
-
+        {this.randerStage()}
+        <button onClick={() => this.setState({ stage: 1 })}>第一階段</button>
+        <button onClick={() => this.setState({ stage: 2 })}>第二階段</button>
+        <button onClick={() => this.setState({ stage: 3 })}>第三階段</button>
         {/* <div className="board-rows">
           {Array.from(Array(this.size).keys()).map((_, i) => (
             <div key={i} className="board-row">

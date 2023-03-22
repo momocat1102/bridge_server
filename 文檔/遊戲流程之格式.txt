@@ -1,0 +1,45 @@
+// record
+// call, change, play 皆為array
+{
+	trump
+	dealer
+	player {p1.name, p2.name}
+	time_limit
+	hand_card{
+		p1_call_handcards,
+		p2_call_handcards,
+		p1_play_handcards,
+		p2_play_handcards,
+	}
+
+	//喊牌
+	call{
+		player,
+		call_val,
+		time_limit{p1, p2}
+	}
+
+	//換牌
+	change{
+		go_first, // 看是誰先手
+		first_card,
+		second_card,
+		first_change_card // 要搶的牌
+		first_get,
+		second_get,
+		hand_cards{p1, p2}
+		time_limit{p1, p2}
+
+	}
+
+	//打牌
+	play{
+		go_first, //看是誰先手
+		first_play,
+		second_play,
+		score{p1, p2}
+		hand_cards{p1, p2}
+		time_limit{p1, p2}
+
+	}
+}
