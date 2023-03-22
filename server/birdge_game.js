@@ -870,6 +870,7 @@ class game{
                     go_first: first_player.name,
                     first_card: first_throw_card,
                     second_card: second_throw_card,
+                    first_change_card: this.to_change,
                     first_get: first_player_get,
                     second_get: second_player_get,
                     time_limit:{

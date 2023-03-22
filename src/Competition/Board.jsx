@@ -92,6 +92,13 @@ class Board extends Component {
           </div>);
           x += 2;
         }
+        else if(i === 2){
+          divlist.push(<div className="card">
+            <img src={this.images[record.change[this.state.changeIndex].first_change_card + ".jpg"].default} alt="card" width="35px" height="60px"/>
+            先手拿牌
+          </div>);
+          x += 2;
+        }
         else{
           divlist.push(<div className="card" style={{right:39*(i - 1) + x}}></div>);
         }
