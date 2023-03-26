@@ -1,3 +1,16 @@
+# Python
+
+## Requirements
+* Python 3
+
+
+
+## Sample bot
+
+[Sample bot](sample_bot)
+
+
+```python=
 import random as rd
 
 PASS = 0
@@ -110,3 +123,6 @@ class SampleBot:
         self.my_hand.remove(my_play)
         
         return my_play      
+```
+
+
