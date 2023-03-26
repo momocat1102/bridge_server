@@ -45,7 +45,7 @@ const viewer_removePlayer = (player_id) => {
         data: player_id,
     });
 };
-const viewer_init = (status, player_list, record, board_end, scoreboard) => {
+const viewer_init = (status, player_list, record, board_end, scoreboard, one2onescore, num) => {
     return JSON.stringify({
         action: "init",
         data: {
@@ -54,6 +54,8 @@ const viewer_init = (status, player_list, record, board_end, scoreboard) => {
             record: record,
             board_end: board_end,
             scoreboard: scoreboard,
+            one2onescore: one2onescore,
+            num: num
         },
     });
 };
@@ -118,6 +120,16 @@ const viewer_updateScoreboard = (scoreboard) => {
         },
     });
 }
+
+const viewer_updateone2oneScoreboard = (scoreboard) => {
+    return JSON.stringify({
+        action: "update_one2one_score_board",
+        data: {
+            scoreboard: scoreboard
+        },
+    });
+}
+
 const viewer_endGame = (game_id) => {
     return JSON.stringify({
         action: "end_game",
@@ -154,6 +166,7 @@ module.exports = {
     viewer_removePlayer: viewer_removePlayer,
     viewer_start: viewer_start,
     viewer_updateBoard: viewer_updateBoard,
+    viewer_updateone2oneScoreboard: viewer_updateone2oneScoreboard,
     // viewer_updateTimeLimit: viewer_updateTimeLimit,
     // viewer_updateStoneCount: viewer_updateStoneCount,
     // viewer_updateWinTimes: viewer_updateWinTimes,

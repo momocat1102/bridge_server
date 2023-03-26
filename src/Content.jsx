@@ -5,6 +5,7 @@ import Introduction from "./Introduction";
 import Document from "./Document";
 import CompetitionList from "./CompetitionList";
 import Competition from "./Competition";
+import RoundRobinLayout from "./Competition/Tournament/RoundRobinLayout";
 
 class Content extends Component {
   render() {
@@ -31,6 +32,11 @@ class Content extends Component {
             <Competition {...props} is_login={is_login} />
           )}
         ></Route>
+        <Route
+          exact path="/:competitionid/:p1/:p2/:num"
+        >
+          <RoundRobinLayout></RoundRobinLayout>
+        </Route>
         <Route
           path="*"
           render={() => {

@@ -12,7 +12,6 @@ import HistoryButtonFooter from "../../ModalComponents/HistoryButtonFooter";
 class RoundRobinLayout extends Component {
   constructor(props) {
     super(props);
-    console.log(this.props)
     this.state = {
       open_modal: false,
       open_modal_winner_chooser: false,
@@ -22,8 +21,9 @@ class RoundRobinLayout extends Component {
     this.open_modal = this.open_modal.bind(this);
     this.open_modal_winner_chooser = this.open_modal_winner_chooser.bind(this);
     this.contextMenuHandler = this.contextMenuHandler.bind(this);
+    this.handleClick = this.handleClick.bind(this);
   }
-
+  
   open_modal(player_a, player_b) {
     this.modal_player_a = player_a;
     this.modal_player_b = player_b;
@@ -38,7 +38,7 @@ class RoundRobinLayout extends Component {
       open_modal_winner_chooser: !this.state.open_modal_winner_chooser,
     });
   }
-
+  
   async contextMenuHandler(e, data, target) {
     if (data.action === "restart") {
       try {
@@ -59,9 +59,10 @@ class RoundRobinLayout extends Component {
   }
   doAssignWinner = async (game_id, winner) => {
     try {
-      await assign_winner(this.props.competition_id, game_id, winner);
+      await assign_winner(this.context.competition_id, game_id, winner);
       this.setState({ open_modal_winner_chooser: false });
     } catch (e) {
+      console.log(e);
       alert("指派失敗");
     }
   };
@@ -74,13 +75,52 @@ class RoundRobinLayout extends Component {
     }
   };
 
+  handleClick(type, p1, p2, index) {
+    this.props.updateState(type, p1, p2, index);
+  }
+
+  one2oneScoreboard(){
+    let scoreboard = [];
+    let p1_score = 0;
+    let p2_score = 0;
+    let game_1 = this.props.one2onescore[this.props.p1 + "_" + this.props.p2 + "_" + this.props.index];
+    let game_2 = this.props.one2onescore[this.props.p2 + "_" + this.props.p1 + "_" + this.props.index];
+    if(game_1 !== undefined){
+      console.log(game_1, game_1[this.props.p1], game_1[this.props.p2]);
+      p1_score += game_1[this.props.p1];
+      p2_score += game_1[this.props.p2];
+    }
+    if(game_2 !== undefined){
+      console.log(game_2, game_2[this.props.p1], game_2[this.props.p2]);
+      p1_score += game_2[this.props.p1];
+      p2_score += game_2[this.props.p2];
+    }
+    if(p1_score > p2_score){
+      scoreboard.push([1, this.props.p1, p1_score]);
+      scoreboard.push([2, this.props.p2, p2_score]);
+    }else{
+      scoreboard.push([1, this.props.p2, p2_score]);
+      scoreboard.push([2, this.props.p1, p1_score]);
+    }
+    // console.log(scoreboard);
+    return scoreboard;
+  }
+
   render() {
+    const {
+      p1,
+      p2,
+    } = this.props;
+    let players = {};
+    players[p1] = undefined;
+    players[p2] = undefined;
     return (
       <div className="round-robin-layout">
-        {/* {console.log(this.props.scoreboard)} */}
-        <Flipper flipKey={this.props.scoreboard.join("")}>
+        <button onClick={() => this.handleClick("Playlist", undefined, undefined, 0)}> 上一頁 </button>
+        {/* {this.props.one2onescore[this.props.p1 + "_" + this.props.p2 + "_" + this.props.index]} */}
+        <Flipper flipKey={this.one2oneScoreboard().join("")}>
           <ul className="scoreboard">
-            {this.props.scoreboard.map(([order, player, score]) => (
+            {this.one2oneScoreboard().map(([order, player, score]) => (
               <Flipped key={player} flipId={player}>
                 <li>
                   <ScoreboardItem
@@ -97,7 +137,7 @@ class RoundRobinLayout extends Component {
           <tbody>
             <tr>
               <td className="table-cell-slash"></td>
-              {Object.keys(this.props.player_list).map((player, index) => (
+              {Object.keys(players).map((player, index) => (
                 <td
                   key={index}
                   className="table-freeze-first-row"
@@ -107,7 +147,7 @@ class RoundRobinLayout extends Component {
                 </td>
               ))}
             </tr>
-            {Object.keys(this.props.player_list).map((player_i, index_i) => (
+            {Object.keys(players).map((player_i, index_i) => (
               <tr key={"i_" + index_i}>
                 <td
                   className="table-freeze-first-col"
@@ -115,17 +155,17 @@ class RoundRobinLayout extends Component {
                 >
                   {player_i}
                 </td>
-                {Object.keys(this.props.player_list).map((player_j, index_j) =>
+                {Object.keys(players).map((player_j, index_j) =>
                   index_i !== index_j ? (
                     <ContextMenuTrigger
                       key={index_i + "_" + index_j}
                       id={
-                        (this.props.is_login &&
+                        (
                           this.props.status !== "end" &&
-                          this.props.board_end[player_i + "_" + player_j] !==
+                          this.props.board_end[player_i + "_" + player_j + "_" + this.props.index] !==
                             undefined) ||
                         (this.props.competition_id.includes("test") &&
-                          this.props.board_end[player_i + "_" + player_j] !==
+                          this.props.record[player_i + "_" + player_j + "_" + this.props.index] !==
                             undefined)
                           ? "contextmenu"
                           : ""
@@ -133,7 +173,7 @@ class RoundRobinLayout extends Component {
                       renderTag={"td"}
                       attributes={{
                         onClick: (e) =>
-                          this.props.board_end[player_i + "_" + player_j] !==
+                          this.props.board_end[player_i + "_" + player_j + "_" + this.props.index] !==
                           undefined
                             ? this.open_modal(player_i, player_j)
                             : null,
@@ -143,13 +183,14 @@ class RoundRobinLayout extends Component {
                         player_b: player_j,
                       }}
                     >
-                      {this.props.board_end[player_i + "_" + player_j] ===
+                      {this.props.board_end[player_i + "_" + player_j + "_" + this.props.index] ===
                       undefined
                         ? "未開始"
-                        : this.props.board_end[player_i + "_" + player_j] ===
+                        : this.props.board_end[player_i + "_" + player_j + "_" + this.props.index] ===
                             true || this.props.status === "end"
                         ? "已結束"
                         : "(進行中)"}
+                        {this.props.board_end[player_i + "_" + player_j + "_" + this.props.index]}
                     </ContextMenuTrigger>
                   ) : (
                     <td key={"j_" + index_j} className="table-cell-slash"></td>
@@ -166,27 +207,27 @@ class RoundRobinLayout extends Component {
               <Board
                 p1={
                   this.props.player_name[
-                    `${this.modal_player_a}_${this.modal_player_b}`
+                    `${this.modal_player_a}_${this.modal_player_b}_${this.props.index}`
                   ] !== undefined
                     ? this.props.player_name[
-                        `${this.modal_player_a}_${this.modal_player_b}`
+                        `${this.modal_player_a}_${this.modal_player_b}_${this.props.index}`
                       ].p1
                     : this.modal_player_a
                 }
                 p2={
                   this.props.player_name[
-                    `${this.modal_player_a}_${this.modal_player_b}`
+                    `${this.modal_player_a}_${this.modal_player_b}_${this.props.index}`
                   ] !== undefined
                     ? this.props.player_name[
-                        `${this.modal_player_a}_${this.modal_player_b}`
+                        `${this.modal_player_a}_${this.modal_player_b}_${this.props.index}`
                       ].p2
                     : this.modal_player_b
                 }
                 record={
                   this.props.record[
-                    `${this.modal_player_a}_${this.modal_player_b}`
+                    `${this.modal_player_a}_${this.modal_player_b}_${this.props.index}`
                   ]
-                  // `${this.modal_player_a}_${this.modal_player_b}`]
+                  // `${this.modal_player_a}_${this.modal_player_b}_${this.props.index}`]
                 }
               ></Board>
             }
@@ -194,7 +235,7 @@ class RoundRobinLayout extends Component {
               this.props.status === "end" ? (
                 <HistoryButtonFooter
                   history_time={this.props.history_time}
-                  game_id={this.modal_player_a + "_" + this.modal_player_b}
+                  game_id={this.modal_player_a + "_" + this.modal_player_b + "_" + this.props.index}
                   loadHistory={this.props.loadHistory}
                 ></HistoryButtonFooter>
               ) : (
@@ -208,7 +249,7 @@ class RoundRobinLayout extends Component {
             download_cb={(e) =>
               this.downloadHistory(
                 this.props.competition_id,
-                this.modal_player_a + "_" + this.modal_player_b,
+                this.modal_player_a + "_" + this.modal_player_b + "_" + this.props.index,
                 `B-${this.modal_player_a}VSW-${this.modal_player_b}`
               )
             }
@@ -245,9 +286,13 @@ class RoundRobinLayout extends Component {
             close={this.open_modal_winner_chooser}
           ></Modal>
         )}
-      </div>
+        </div>
     );
+
   }
 }
 
 export default hot(module)(RoundRobinLayout);
+
+
+          

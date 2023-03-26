@@ -5,6 +5,7 @@ import { remove_player, start_competition } from "../api";
 class Competition extends Component {
   constructor(props) {
     super(props);
+    // console.log(this.props)
     this.state = {
       starting: false,
     };

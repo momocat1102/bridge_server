@@ -847,7 +847,7 @@ class game{
                 } catch (e) {
                     throw new Error('early stop');
                 }            
-                console.log(second_player.name + "出:" + this.visual_card(second_throw_card));
+                // console.log(second_player.name + "出:" + this.visual_card(second_throw_card));
                 this.hist += second_player.name + "出:" + this.visual_card(second_throw_card) + "\n";
                 // 移除用過的牌
                 first_handcards.splice(first_handcards.indexOf(first_throw_card), 1); 
@@ -1056,16 +1056,18 @@ class game{
             result = this.current_player === this.P1 ? this.P2 : this.P1;
             console.log("someone disconnect");
         }
-        console.log(this.record)
+        // console.log(this.record)
         // console.log(this.record.play[this.record.play.length - 1].score)
         // console.log(this.record.play[this.record.play.length - 1].time_limit)
         this.is_end = true;
+        let winner;
         if(result === this.P1){
             // console.log(this.p1.name + " win");
             this.hist += this.p1.name + " win\n";
             this.push_hist(this.game_id, this.hist, this.game_num);
             this.p1_win += 1;
             this.update_scoreboard(this.p1.name, 1, this.p1_timer)
+            winner = this.p1.name;
             // resolve(this.p1); 
         }else{
             // console.log(this.p2.name + " win");
@@ -1073,6 +1075,7 @@ class game{
             this.push_hist(this.game_id, this.hist, this.game_num);
             this.p2_win += 1;
             this.update_scoreboard(this.p2.name, 1, this.p2_timer)
+            winner = this.p2.name;
             // resolve(this.p2);
         }
         this.viewer_update();
@@ -1096,6 +1099,7 @@ class game{
         });
         console.log("game end");
         resolve();
+        return winner;
     }
 
 }

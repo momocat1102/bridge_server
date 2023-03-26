@@ -235,7 +235,7 @@ class Board extends Component {
           </div>
           <div className="board-row">
             {record.change.length === 0 || !record.change[this.state.changeIndex] ?
-              {}
+              <div></div>
             : 
               record.change[this.state.changeIndex].hand_cards.p1.map((card, _) => (
                 <div className="card">
@@ -249,7 +249,7 @@ class Board extends Component {
           </div>
           <div className="board-row">
             {record.change.length === 0 || !record.change[this.state.changeIndex] ?
-              {}
+              <div></div>
             : 
               record.change[this.state.changeIndex].hand_cards.p2.map((card, _) => (
                 <div className="card">
@@ -357,7 +357,7 @@ class Board extends Component {
           </div>
           <hr style={{ width: "100%" }}></hr>
           <div>莊家：{record.dealer === undefined ? "" : record.dealer}</div>
-          <div>王牌：{record.trump === undefined ? "" : record.trump[1]} {shape[record.trump[0]]}</div>
+          <div>王牌：{record.trump === undefined ? "" : record.trump[1]} {record.trump === undefined ? "" : shape[record.trump[0]]}</div>
           <hr style={{ width: "100%" }}></hr>
           <div>
             {p2.includes("#") ? (

@@ -177,6 +177,7 @@ const ws_connect = async (
   onStart,
   onUpdateBoard,
   onUpdateScoreboard,
+  onUpdateone2oneScoreboard,
   onUpdateTree,
   onEndGame,
   onEndCompetition,
@@ -206,6 +207,8 @@ const ws_connect = async (
           data.data.record,
           data.data.board_end,
           data.data.scoreboard,
+          data.data.one2onescore,
+          data.data.num
         );
       } else if (data.action === "add_player") {
         onAddPlayer(data.data);
@@ -223,6 +226,8 @@ const ws_connect = async (
         // alert(data.data.scoreboard);
         onUpdateScoreboard(data.data.scoreboard);
         // console.log(data.data.scoreboard)
+      } else if (data.action === "update_one2one_score_board") {
+        onUpdateone2oneScoreboard(data.data.scoreboard);
       } else if (data.action === "update_tree") {
         onUpdateTree(data.data.game_tree);
       } else if (data.action === "end_game") {
