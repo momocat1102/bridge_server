@@ -989,3 +989,235 @@ td {
     background-color: transparent;
     border-color: rgba(0, 0, 0, .15);
 }
+
+
+
+
+
+
+
+
+.board_bear {
+    width: 100%;
+    height: 800px;
+    background-color:#F4F4F4;
+}
+.board_menu {
+    width:100%; 
+    height:60px; 
+    background-color: #008B8B;
+}
+.pos_fixed {
+    position: fixed;
+}
+.btn_card {
+    border-style: none;
+    background-color: transparent;
+    margin: 0;
+    padding: 0;
+}
+.btn_card:hover {
+    filter: brightness(.7);
+    border-radius: 18px;
+    height: 175px;
+}
+.img_card {
+    width: 136px;
+    height: 185px;
+}
+.btn_call {
+    border-style: none;
+    background-color: transparent;
+    margin: 0;
+    padding: 0;
+}
+.btn_call:hover {
+    filter: brightness(.7);
+    border-radius: 18px;
+    height: 72px;
+}
+.btn_call_click {
+    filter: brightness(.3);
+    border-radius: 18px;
+    height: 72px;
+}
+.img_call {
+    height: 72px;
+}
+.img_user {
+    filter: saturate(1);
+    margin:0 0 -30px 0;
+}
+.hr_user {
+    margin: -10px 0;
+}
+
+.btn_page {
+    border-style: none;
+    background-color: transparent;
+    width: 200px;
+    height: 60px;
+    font-size: 24px; 
+    color: #CCE8E8; 
+    font-weight: 900;
+}
+.btn_page:hover {
+    filter: brightness(.7);
+    background-color: #00FFFF;
+    width: 200px;
+    height: 60px;
+    color: #195764; 
+}
+.btn_page_click {
+    filter: brightness(.7);
+    background-color: #00FFFF;
+    width: 200px;
+    height: 60px;
+    color: #195764; 
+}
+.btn_pageR {
+    border: solid 1px #CCE8E8;
+    background-color: transparent;
+    width: 50px;
+    height: 50px;
+    font-size: 24px; 
+    color: #CCE8E8; 
+    font-weight: 900;
+    float:right;
+    margin: 5px 20px 5px 0;
+}
+.btn_pageR:hover {
+    filter: brightness(.7);
+    background-color: #00FFFF;
+    border: solid 1px #195764;
+    width: 50px;
+    height: 50px;
+    color: #195764; 
+}
+
+.zindex_10 { z-index: 10; position:absolute; }
+.zindex_11 { z-index: 11; position:absolute }
+.zindex_12 { z-index: 12; position:absolute }
+.zindex_13 { z-index: 13; position:absolute }
+.zindex_14 { z-index: 14; position:absolute }
+.zindex_15 { z-index: 15; position:absolute }
+.zindex_16 { z-index: 16; position:absolute }
+.zindex_17 { z-index: 17; position:absolute }
+.zindex_18 { z-index: 18; position:absolute }
+.zindex_19 { z-index: 19; position:absolute }
+.zindex_20 { z-index: 20; position:absolute }
+.zindex_21 { z-index: 21; position:absolute; }
+.zindex_22 { z-index: 22; position:absolute; }
+
+.top_25 { top: 25px; }
+.top_50 { top: 50px; }
+.top_140 { top: 140px; }
+.top_240 { top: 240px; }
+.top_275 { top: 275px; }
+.top_500 { top: 500px; }
+.top_525 { top: 525px; }
+
+.left_c0 { left: 25px; }
+.left_c1 { left: 115px; }
+.left_c2 { left: 205px; }
+.left_c3 { left: 295px; }
+.left_c4 { left: 385px; }
+.left_c5 { left: 475px; }
+.left_c6 { left: 565px; }
+.left_c7 { left: 655px; }
+.left_c8 { left: 745px; }
+.left_c9 { left: 835px; }
+.left_c10 { left: 925px; }
+.left_c11 { left: 1015px; }
+.left_c12 { left: 1105px; }
+
+.left_1270 { left:1270px; }
+.top_380 { top: 380px; }
+
+.move_co {
+    animation: move_co 1s forwards;
+}
+@keyframes move_co {
+    from {
+        top:25px;
+    }
+    to {
+        top:240px;
+        left:745px;
+    }
+}
+.move_po {
+    animation: move_po 1s forwards;
+}
+@keyframes move_po {
+    from {
+        top:525px;
+    }
+    to {
+        top:310px;
+        left:1015px;
+    }
+}
+.move_ci {
+    animation: move_ci 1s forwards;
+}
+@keyframes move_ci {
+    from {
+        top:275px;
+        left:205px;
+    }
+    to {
+        top:50px;
+        left:475px;
+    }
+}
+.move_pi {
+    animation: move_pi 1s forwards;
+}
+@keyframes move_pi {
+    from {
+        top:275px;
+        left:25px;
+    }
+    to {
+        top:500px;
+        left:565px;
+    }
+}
+.move_nt {
+    animation: move_nt 1s forwards;
+}
+@keyframes move_nt {
+    from {
+    }
+    to {
+        filter:brightness(.5);
+        border-radius: 18px;
+        height: 175px;
+    }
+}
+
+.txt_st {
+    word-wrap:break-word;
+    font-size: 16px;
+    font-weight: 900;
+}
+
+.div_user {
+    border:solid 2px #2F4F4F; 
+    border-radius: 18px; 
+    width:145px; 
+    height:325px; 
+    box-shadow:4px 4px 1px darkgrey;
+    padding: 0 15px;
+    background-color: white;
+}
+.div_call {
+    border:solid 2px #2F4F4F; 
+    border-radius: 18px; 
+    width:798px; 
+    height:200px; 
+    box-shadow:4px 4px 1px darkgrey;
+    padding: 25px;
+    background-color: #2F4F4F;
+}

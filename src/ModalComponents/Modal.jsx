@@ -19,6 +19,8 @@ class Modal extends Component {
           onClick={(e) => e.stopPropagation()}
           style={{
             // width: width,
+            width: "1480px",
+            height: "800px",
             margin: margin_top + " auto",
             // maxWidth: "40rem",
           }}
@@ -45,7 +47,7 @@ class Modal extends Component {
             </div>
           </header>
           <div className="modal-content">{model_content}</div>
-          <div className="modal-footer">{model_footer}</div>
+          {/* <div className="modal-footer">{model_footer}</div> */}
         </div>
       </div>
     );
