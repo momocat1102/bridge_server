@@ -283,7 +283,7 @@ class game{
             try {
                 // socket.removeEventListener("message", handler);
                 let get_data = JSON.parse(message.data);
-                // console.log(get_data)
+                console.log(get_data)
                 switch(get_data.id){
                     case 0 : // ready
                         break;

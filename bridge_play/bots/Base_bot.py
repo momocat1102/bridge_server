@@ -1,4 +1,4 @@
-from make_tree import make_tree
+# from make_tree import make_tree
 import random as rd
 ON_MYHAND = 0
 ON_OPPONENTHAND = 1
@@ -51,7 +51,7 @@ class BaseBot:
             
         self.my_hand.remove(my_change) 
         self.card_state[my_change] = USED
-        
+        self.revealed_card = revealed_card
         return my_change
     
     def can_play(self, oppo): #算出可以出什麼
@@ -61,7 +61,7 @@ class BaseBot:
             can_play_list = list(self.my_hand)
         return can_play_list
     
-    def dealchange(self, myget, oppoget, oppo_change):
+    def dealchange(self, myget, oppo_change):
         '''
             myget:       自己得到的牌
             oppoget:     對手得到的牌(若換牌是贏的就不會知道，不知道的話為-1)
@@ -71,10 +71,10 @@ class BaseBot:
         self.my_hand.sort()
         self.card_state[myget] = ON_MYHAND
         
-        if oppoget != -1:
-            self.opponent_hand.append(oppoget)
+        if self.revealed_card != myget:
+            self.opponent_hand.append(self.revealed_card)
             self.opponent_hand.sort()
-            self.card_state[oppoget] = ON_OPPONENTHAND
+            self.card_state[self.revealed_card] = ON_OPPONENTHAND
       
         if oppo_change in self.opponent_hand:
             self.opponent_hand.remove(oppo_change)

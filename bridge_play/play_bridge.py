@@ -96,12 +96,12 @@ def phase_change(curr_player:CBWR, next_player:CBWR, remain_cards, isshow):
         
         #比較輸贏
         if cmp(offensive, defensive, curr_player.trump): #先手贏
-            curr_player.dealchange(remain_cards[2*j  ], CHANGE_UNKNOW_GET, defensive)      
-            next_player.dealchange(remain_cards[2*j+1], remain_cards[2*j], offensive)
+            curr_player.dealchange(remain_cards[2*j  ], defensive)      
+            next_player.dealchange(remain_cards[2*j+1], offensive)
              
         else:                                                #先手輸
-            curr_player.dealchange(remain_cards[2*j+1], remain_cards[2*j], defensive)      
-            next_player.dealchange(remain_cards[2*j  ], CHANGE_UNKNOW_GET, offensive)
+            curr_player.dealchange(remain_cards[2*j+1], defensive)      
+            next_player.dealchange(remain_cards[2*j  ], offensive)
             #先後手交換
             curr_player, next_player = next_player, curr_player
             

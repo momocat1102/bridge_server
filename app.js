@@ -25,29 +25,29 @@ app.use(expressFormidable());
 app.use(cors());
 
 // 資料庫
-const pool = new sql.ConnectionPool({
-    user: "othello",
-    password: "othello",
-    server: "DESKTOP-KF383EB/SQLEXPRESS", // 10.22.23.161 127.0.0.1
-    database: "OthelloPlatform",
-    options: {
-        encrypt: true,
-        enableArithAbort: true,
-        trustServerCertificate: true,
-    },
-});
-const readonlyPoolPromise = pool.connect();
-pool.on("error", (err) => {
-    console.log("Database Connection Failed :", err); // ... error handler
-});
+// const pool = new sql.ConnectionPool({
+//     user: "othello",
+//     password: "othello",
+//     server: "DESKTOP-KF383EB/SQLEXPRESS", // 10.22.23.161 127.0.0.1
+//     database: "OthelloPlatform",
+//     options: {
+//         encrypt: true,
+//         enableArithAbort: true,
+//         trustServerCertificate: true,
+//     },
+// });
+// const readonlyPoolPromise = pool.connect();
+// pool.on("error", (err) => {
+//     console.log("Database Connection Failed :", err); // ... error handler
+// });
 // ------------------------------------------------------------------------------
 
-const runSQL = async(sqlCode) => {
-    const pool = await readonlyPoolPromise;
-    const request = pool.request();
-    const result = await request.query(sqlCode);
-    return result.recordset;
-};
+// const runSQL = async(sqlCode) => {
+//     const pool = await readonlyPoolPromise;
+//     const request = pool.request();
+//     const result = await request.query(sqlCode);
+//     return result.recordset;
+// };
 
 app.post("/admin_login", function(req, res) {
     if (
