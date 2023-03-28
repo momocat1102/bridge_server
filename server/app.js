@@ -8,7 +8,7 @@ const jwt = require("jsonwebtoken");
 // const { OAuth2Client } = require("google-auth-library");
 // const fs = require("fs");
 // const { player_invalidEmail } = require("./protocolTemplate.js");
-const { game } = require("./birdge_game");
+const { game } = require("./bridge_game");
 
 const SERVER_SECRET = "hsgijfkoksmrnebnhrvsmj";
 const ADMIN_USERNAME =

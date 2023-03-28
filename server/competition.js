@@ -1,7 +1,7 @@
 const { v4: uuidv4 } = require("uuid");
 const fs = require("fs");
 const archiver = require('archiver');
-const { game } = require("./birdge_game");
+const { game } = require("./bridge_game");
 // const { colorHandshake } = require("./colorHandshake");
 const {
     viewer_addPlayer,
