@@ -19,11 +19,13 @@ class TurnList extends Component {
       num,
       updateState
     } = this.props;
+    console.log(this.props);
     return (
       <div className="board">
         <div className="board-row">
           {Array.from(Array(num).keys()).map((_, index) => (
             <div>
+              {/* {console.log(num)} */}
               <button onClick={() => this.handleClick("round-robin", p1, p2, index + 1)}> {index + 1} </button>
             </div>
           ))}

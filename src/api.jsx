@@ -93,18 +93,20 @@ const download_history = async (competition_id, game_id, filename) => {
       });
   });
 };
-
-const create_competition = async (name, type, time_limit, board_size) => {
+// eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2Nzk5OTkyNTQsImV4cCI6MTY4MDA4NTY1NH0.EIiIuflDZCoNpM_a6KeyMtCUmZOu9Qz0wAWpKfOBR9Y
+const create_competition = async (name, type, time_limit, num) => {
+  console.log(name, type, time_limit, num)
   return new Promise((resolve, reject) => {
     let formData = new FormData();
     formData.append("competition_name", name);
     formData.append("competition_type", type);
     formData.append("time_limit", time_limit);
-    formData.append("board_size", board_size);
+    formData.append("num", num);
     formData.append(
       "Authorization",
       "Bearer " + window.localStorage.getItem("token")
     );
+    console.log(window.localStorage.getItem("token"))
     fetch(config.server_url + "/create_competition", {
       method: "POST",
       header: {

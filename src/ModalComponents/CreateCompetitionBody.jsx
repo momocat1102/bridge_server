@@ -7,11 +7,11 @@ class CreateCompetitionBody extends Component {
       defaultName,
       defaultType,
       defaultTimeLimit,
-      defaultBoardSize,
+      defaultnum,
       onChangeName,
       onChangeType,
       onChangeTimeLimit,
-      onChangeBoardSize,
+      onChangenum,
     } = this.props;
 
     return (
@@ -28,7 +28,7 @@ class CreateCompetitionBody extends Component {
           onChange={(e) => onChangeType(e.target.value)}
         >
           <option value="round-robin">循環賽</option>
-          <option value="knockout">淘汰賽</option>
+          {/* <option value="knockout">淘汰賽</option> */}
         </select>
         <br />
         <label>時間限制：</label>
@@ -51,17 +51,31 @@ class CreateCompetitionBody extends Component {
         </button>
         <span>{defaultTimeLimit} min</span>
         <br />
-        <label>盤面大小：</label>
-        <select
+        <label>遊玩局數：</label>
+        {/* <select
           value={defaultBoardSize}
-          onChange={(e) => onChangeBoardSize(e.target.value)}
-        >
-          {[4, 6, 8, 10, 12, 14].map((size, index) => (
-            <option key={index} value={size}>
-              {size}
-            </option>
-          ))}
-        </select>
+          onChange={(e) => onChangeBoardSize(e.target.value)} */}
+        {/* > */}
+          <input
+            type="number"
+            min="1"
+            value={defaultnum}
+            onChange={(e) => onChangenum(e.target.value)}
+            onKeyDown={(e) => {
+              if (
+                !(
+                  e.key === "Backspace" ||
+                  e.key === "Delete" ||
+                  e.key === "Tab" ||
+                  e.key === "." ||
+                  (e.key >= "0" && e.key <= "9")
+                )
+              ) {
+                e.preventDefault();
+              }
+            }}
+          /> {defaultnum} 局
+        {/* </select> */}
       </div>
     );
   }

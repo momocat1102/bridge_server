@@ -30,7 +30,8 @@ class CompetitionSocket(websocket.WebSocketApp):
             "action": "join",
             "data": {
                 "source": "player",
-                "player_id": self.player_id
+                "player_id": self.player_id,
+                "competition": self.competition_id
             }
         }
         self.ws.send(json.dumps(join))

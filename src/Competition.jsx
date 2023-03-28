@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import { hot } from "react-hot-loader";
 import CompetitionPrepare from "./Competition/CompetitionPrepare";
 import CompetitionStart from "./Competition/CompetitionStart";
-import RoundRobinLayout from "./Competition/Tournament/RoundRobinLayout";
 import { competition_info, competition_history, ws_connect } from "./api";
 // import {DataProvider} from "./context"
 class Competition extends Component {

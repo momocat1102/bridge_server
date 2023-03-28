@@ -19,7 +19,8 @@ class CompetitionList extends Component {
       let tmp_list = [];
       let tmp_list_ended = [];
       let data = await competition_list();
-      JSON.parse(data).forEach((row) =>
+      data = JSON.parse(data);
+      Object.values(data).forEach((row) =>
         row.status === "ended" ? tmp_list_ended.push(row) : tmp_list.push(row)
       );
       this.setState({
@@ -27,6 +28,7 @@ class CompetitionList extends Component {
         competition_list_ended: tmp_list_ended,
       });
     } catch (e) {
+      console.log(e);
       alert('server is not reachable')
     }
   }

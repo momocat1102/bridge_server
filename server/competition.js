@@ -48,6 +48,7 @@ class Competition {
     add_player = (name, socket) => {
         // if not exist, add, then brocast to viewers
         if (this.status === "prepare") {
+            console.log("test add_player")
             if (!Object.keys(this.players).includes(name)) {
                 this.players[name] = socket;
                 socket.on("close", () => {
@@ -174,7 +175,7 @@ class Competition {
                 // win_times,
                 this.calc_scoreboard_order(this.scoreboard),
                 this.one2onescore,
-                this.num
+                parseInt(this.num)
             )
         );
         console.log(this.num);

@@ -15,8 +15,8 @@ class CompetitionItem extends Component {
       open_delete_modal: false,
       competition_name: this.generateRandomHash(),
       competition_type: "round-robin",
-      time_limit: 15,
-      board_size: 8,
+      time_limit: 3,
+      num: 10,
       create_checking: false,
       delete_checking: false,
     };
@@ -39,7 +39,7 @@ class CompetitionItem extends Component {
         this.state.competition_name,
         this.state.competition_type,
         this.state.time_limit,
-        this.state.board_size
+        this.state.num
       );
       this.setState({
         open_create_modal: false,
@@ -47,12 +47,13 @@ class CompetitionItem extends Component {
         competition_name: this.generateRandomHash(),
         competition_type: "round-robin",
         time_limit: 15,
-        board_size: 8,
+        num: 10,
         create_checking: false,
         delete_checking: false,
       });
       this.props.updateCompetitionList();
     } catch (e) {
+      console.log(e);
       this.setState({ create_checking: false });
       alert("create fail");
     }
@@ -100,7 +101,7 @@ class CompetitionItem extends Component {
                 defaultName={this.state.competition_name}
                 defaultType={this.state.competition_type}
                 defaultTimeLimit={this.state.time_limit}
-                defaultBoardSize={this.state.board_size}
+                defaultnum={this.state.num}
                 onChangeName={(name) =>
                   this.setState({ competition_name: name })
                 }
@@ -110,8 +111,8 @@ class CompetitionItem extends Component {
                 onChangeTimeLimit={(time_limit) =>
                   this.setState({ time_limit: time_limit })
                 }
-                onChangeBoardSize={(board_size) =>
-                  this.setState({ board_size: board_size })
+                onChangenum={(num) =>
+                  this.setState({ num: num })
                 }
               ></CreateCompetitionBody>
             }
