@@ -2,7 +2,7 @@ import websocket, threading, json, time, numpy as np
 import subprocess
 
 
-exe_path = "./HoneymoonBridgeTest.exe"
+exe_path = "./aiia_honeymoon_bridge.exe"
 process = None
 
 class CompetitionSocket(websocket.WebSocketApp):
