@@ -2,7 +2,9 @@ const { v4: uuidv4 } = require("uuid");
 const fs = require("fs");
 const archiver = require('archiver');
 const { game } = require("./bridge_game");
+// const {COMPETITIONSFILE} = require("./app.js");
 // const { colorHandshake } = require("./colorHandshake");
+const COMPETITIONSPATH = "server/bridge_history/";
 const {
     viewer_addPlayer,
     viewer_removePlayer,
@@ -25,23 +27,24 @@ class Competition {
         this.players = {};
         this.viewers = {};
         this.games = {};
-        this.game_tree = undefined;
+        // this.game_tree = undefined;
         this.reconnect_promise = {};
         this.scoreboard = new Map();
         this.one2onescore = {}
         this.num = num;
-        this.hist = { players: [], games: {}, scoreboard: {}, game_tree: [] };
+        this.hist = { players: [], record: {}, board_end: {}, scoreboard: {}, one2onescore: {} };
     }
-    
+
     add_reconnect_promise = (player_id) => {
         return new Promise((resolve, reject) => {
             console.log("add_reconnect_promise")
-            console.log(this.reconnect_promise)
+            // console.log(this.reconnect_promise)
             if (this.reconnect_promise[player_id] === undefined) {
                 this.reconnect_promise[player_id] = [resolve];
             } else {
                 this.reconnect_promise[player_id].push(resolve);
             }
+            console.log(this.reconnect_promise)
         })
     }
 
@@ -100,7 +103,7 @@ class Competition {
                         this.reconnect_promise[name].forEach((resolve) => {
                             resolve(socket);
                         });
-                        delete this.reconnect_promise[name];                        
+                        delete this.reconnect_promise[name];
                     }
                 });
             }
@@ -108,6 +111,7 @@ class Competition {
     };
 
     delete_player = (name) => {
+        // console.log("delete_player");
         let socket = this.players[name];
         socket.close();
         if (this.status === "prepare") {
@@ -116,6 +120,7 @@ class Competition {
                 viewer.send(viewer_removePlayer(name));
             });
         }
+        // console.log(this.players);
     };
 
     add_viewer = (socket) => {
@@ -229,39 +234,42 @@ class Competition {
         return tmp;
     };
 
-    push_hist = (game_id, hist, game_num) => {
-        let competition_id = this.competition_id;
-        let mkdirp = require('mkdirp');
-        // if (!this.competition_id.includes("test")) {
-            mkdirp(`./bridge_history/${this.competition_id}`, (err) => {
-                if(err)
+    push_hist = (game_id, data, type = 'view') => {
+        if (type === 'view') {
+            this.hist.record[game_id] = data;
+            this.hist.board_end[game_id] = true;
+        } else if (type === 'download') {
+            let mkdirp = require('mkdirp');
+            // if (!this.competition_id.includes("test")) {
+            mkdirp(`${COMPETITIONSPATH}${this.competition_id}`, (err) => {
+                if (err)
                     console.log(err)
-                else{
+                else {
                     console.log("made dir staring with");
-                    fs.writeFileSync(`./bridge_history/${competition_id}/${game_id}_${game_num}.txt`, hist);
+                    fs.writeFileSync(`${COMPETITIONSPATH}${this.competition_id}/${game_id}.txt`, data);
 
                 }
             })
-
+        }
         // }
     };
 
     push_zip = () => {
         let competition_id = this.competition_id;
-        const output = fs.createWriteStream(`./bridge_history/${competition_id}.zip`);
-        const archive = archiver('zip', {zlib: {level: 9}});
+        const output = fs.createWriteStream(`${COMPETITIONSPATH}${competition_id}.zip`);
+        const archive = archiver('zip', { zlib: { level: 9 } });
         archive.pipe(output);
-        archive.directory(`./bridge_history/${competition_id}`, false);
+        archive.directory(`${COMPETITIONSPATH}${competition_id}`, false);
         archive.finalize();
-    }    
+    }
 
-    start = async() => {
+    start = async () => {
         this.status = "start";
         if (this.type === "round-robin") {
             this.init_scoreboard();
             for (let i = 0; i < Object.keys(this.players).length; i++) {
-                for (let j = i + 1; j < Object.keys(this.players).length; j++){
-                    for(let game_num = 1; game_num <= this.num; game_num++){
+                for (let j = i + 1; j < Object.keys(this.players).length; j++) {
+                    for (let game_num = 1; game_num <= this.num; game_num++) {
                         let player_name_i = Object.keys(this.players)[i];
                         let player_name_j = Object.keys(this.players)[j];
                         let game_id_1 = player_name_i + "_" + player_name_j + "_" + game_num;
@@ -273,7 +281,7 @@ class Competition {
                         this.one2onescore[game_id_2][player_name_i] = 0
                         this.one2onescore[game_id_2][player_name_j] = 0
                     }
-                    
+
                 }
             }
             Object.values(this.viewers).forEach((viewer) => {
@@ -285,13 +293,13 @@ class Competition {
                     viewer_updateone2oneScoreboard(this.one2onescore)
                 );
             });
-            
+
             // let one2onescore = {};
             let winner = undefined;
             for (let i = 0; i < Object.keys(this.players).length; i++) {
                 for (let j = i + 1; j < Object.keys(this.players).length; j++) {
                     // 打100場
-                    for(let game_num = 1; game_num <= this.num; game_num++){
+                    for (let game_num = 1; game_num <= this.num; game_num++) {
                         console.log("場次 " + game_num);
                         let player_name_i = Object.keys(this.players)[i];
                         let player_name_j = Object.keys(this.players)[j];
@@ -309,7 +317,7 @@ class Competition {
                         // running_games[player_name_i + "_" + player_name_j] =
                         // this.games[player_name_i + "_" + player_name_j].BO1();
                         winner = await this.games[game_id_1].play()
-                        console.log("winner is " + winner, player_name_i, player_name_j);
+                        // console.log("winner is " + winner, player_name_i, player_name_j);
                         if (winner === player_name_i) {
                             this.one2onescore[game_id_1][player_name_i] += 1;
                         } else {
@@ -320,10 +328,9 @@ class Competition {
                                 viewer_updateone2oneScoreboard(this.one2onescore)
                             );
                         });
-                        console.log(this.one2onescore);
-                            // .catch(err => {
-                            //     console.log("disconnect")
-                            // });
+                        // .catch(err => {
+                        //     console.log("disconnect")
+                        // });
                         let cardlist = this.games[game_id_1].outcard();
                         this.games[game_id_2] = new game(
                             game_id_2, { name: player_name_j, socket: this.players[player_name_j] }, { name: player_name_i, socket: this.players[player_name_i] },
@@ -347,23 +354,16 @@ class Competition {
                                 viewer_updateone2oneScoreboard(this.one2onescore)
                             );
                         });
-                        console.log(this.one2onescore);
+                        // console.log(this.one2onescore);
                         // console.log("winner is " + winner, player_name_i, player_name_j);
-                            // .catch(err => {
-                            //     console.log("disconnect")
-                            // });
+                        // .catch(err => {
+                        //     console.log("disconnect")
+                        // });
                     }
                 }
             }
-            console.log(this.one2onescore);
+            // console.log(this.one2onescore);
             this.push_zip()
-            setTimeout(() => {
-              }, 2000);
-            Object.values(this.viewers).forEach((viewer) => {
-                viewer.send(
-                    viewer_endCompetition()
-                );
-            });
             // console.log("結束")
             // for (let i = 0; i < Object.keys(running_games).length; i++) {
             //     let result = await running_games[Object.keys(running_games)[i]];
@@ -444,7 +444,7 @@ class Competition {
         Object.keys(this.players).forEach((player) =>
             this.hist.players.push(player)
         );
-
+        this.hist.one2onescore = this.one2onescore;
         this.hist.scoreboard = this.calc_scoreboard_order(this.scoreboard);
         if (this.competition_id.includes("test")) {
             // this.runSQL(
@@ -457,42 +457,47 @@ class Competition {
                 }
             });
             this.games = {};
-            this.game_tree = undefined;
             this.scoreboard = new Map();
-            this.hist = { players: [], games: {}, scoreboard: {}, game_tree: [] };
+            this.hist = { players: [], record: {}, board_end: {}, scoreboard: {}, one2onescore: {} };
         } else {
-            this.status = "prepare";
+            this.status = "end";
             Object.entries(this.players).map(([player, socket]) => {
                 if (socket.readyState === 3) {
                     delete this.players[player];
                 }
             });
             this.games = {};
-            this.game_tree = undefined;
             this.scoreboard = new Map();
-            this.hist = { players: [], games: {}, scoreboard: {}, game_tree: [] };
-            // this.removeCompetition(this.competition_id);
-            // Object.values(this.viewers).forEach((viewer) => {
-            //     viewer.send(viewer_endCompetition());
-            // });
-            // for (let i = 0; i < Object.keys(this.players).length; i++) {
-            //     this.players[Object.keys(this.players)[i]].close();
-            // }
-            // fs.writeFileSync(
-            //     `bridge_history/${this.competition_id}.json`,
-            //     JSON.stringify(this.hist)
-            // );
-            // this.runSQL(
-            //     `update Competition set status='ended' where id='${this.competition_id}'`
-            // ).then((data) => {
-            //     this.removeCompetition(this.competition_id);
-            //     Object.values(this.viewers).forEach((viewer) => {
-            //         viewer.send(viewer_endCompetition());
-            //     });
-            //     for (let i = 0; i < Object.keys(this.players).length; i++) {
-            //         this.players[Object.keys(this.players)[i]].close();
-            //     }
-            // });
+            this.removeCompetition(this.competition_id);
+            Object.values(this.viewers).forEach((viewer) => {
+                viewer.send(viewer_endCompetition());
+            });
+            for (let i = 0; i < Object.keys(this.players).length; i++) {
+                this.players[Object.keys(this.players)[i]].close();
+            }
+            // console.log(this.hist)
+            fs.writeFileSync(
+                `${COMPETITIONSPATH}${this.competition_id}.json`,
+                JSON.stringify(this.hist)
+            );
+            this.hist = { players: [], record: {}, board_end: {}, scoreboard: {}, one2onescore: {} };
+            // console.log(COMPETITIONSPATH)
+            fs.readFile(COMPETITIONSPATH + "competitions.json", "utf8", (err, data) => {
+                if (err) throw err;
+                const competitionsData = JSON.parse(data);
+                competitionsData[this.competition_id].status = "ended";
+                const updatedData = JSON.stringify(competitionsData);
+                fs.writeFile(COMPETITIONSPATH + "competitions.json", updatedData, (err) => {
+                    if (err) throw err;
+                });
+            });
+            this.removeCompetition(this.competition_id);
+            Object.values(this.viewers).forEach((viewer) => {
+                viewer.send(viewer_endCompetition());
+            });
+            for (let i = 0; i < Object.keys(this.players).length; i++) {
+                this.players[Object.keys(this.players)[i]].close();
+            }
         }
     };
 }

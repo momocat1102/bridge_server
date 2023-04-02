@@ -11,7 +11,6 @@ class Competition extends Component {
     };
   }
   startCompetition = () => {
-    console.log("GO")
     this.setState({ starting: true });
     try {
       start_competition(this.props.id);
@@ -22,7 +21,10 @@ class Competition extends Component {
   };
 
   render() {
-    // const styles = this.props.id.includes("test") ? null : { visibility: "hidden" };
+    const styles =
+      this.props.is_login || this.props.id.includes("test")
+        ? null
+        : { visibility: "hidden" };
     return (
       <div className="competition-prepare">
         <div className="id">
@@ -35,7 +37,7 @@ class Competition extends Component {
           </div>
           <button
             className="start-button"
-            // style={styles}
+            style={styles}
             onClick={this.startCompetition}
           >
             {this.state.starting ? (

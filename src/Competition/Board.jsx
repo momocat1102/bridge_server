@@ -1,14 +1,15 @@
-import React, { Component} from "react";
+import React, { Component } from "react";
 import { hot } from "react-hot-loader";
 
 
 class Board extends Component {
   constructor(props) {
     super(props);
-    this.size = this.props.size;
     this.state = { stage: 1, callIndex: 0, changeIndex: 0, playIndex: 0};
     this.images = this.importAll(require.context('./cards', false, /\.(png|jpe?g|svg)$/));
     this.user_img = this.call_user();
+    this.flower = ["♣", "♦", "♥", "♠", "N", "Pa"];
+    this.number = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
   };
 
   importAll(r) {
@@ -19,64 +20,6 @@ class Board extends Component {
     return images;
   }
   
-  play_card(){
-    const {
-      record
-    } = this.props;
-    let divlist = [];
-    let x = 0
-    if (record.play[this.state.playIndex] === undefined){
-      for(let i = 0; i < 13; i++){
-        divlist.push(<div className="none_card"></div>);
-      }
-    }else{
-      for(let i = 0; i < 13; i++){
-        if(i === 6){         
-          divlist.push(<div className="card">
-            <img src={this.images[record.play[this.state.playIndex].first_play + ".png"].default} alt="card" width="35px" height="60px"/>
-            先手出牌
-          </div>);
-          x += 2;
-        }
-        else if(i === 9){
-          divlist.push(<div className="card">
-            <img src={this.images[record.play[this.state.playIndex].second_play + ".png"].default} alt="card" width="35px" height="60px"/>
-            後手出牌
-          </div>);
-          x += 2;
-        }
-        else{
-          divlist.push(<div className="card" style={{right:39*(i - 1) + x}}></div>);
-        }
-      }
-    }
-    return divlist
-  }
-  
-  visual_handcards(player_name, hand_cards) {
-    // console.log(hand_cards);
-    let number_list = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
-    let shape = ['黑桃', '紅心', '方塊', '梅花'];
-    let shape_list = [[], [], [], []];
-    let visual_cards = "";
-    for(let i = 0; i < hand_cards.length; i++){
-      for(let j = 0; j < 4; j++){
-        if(Math.floor(hand_cards[i] / 13) === j){
-            // console.log(Math.floor(p1_cards[i] / 13));
-            shape_list[j].push(number_list[hand_cards[i] % 13]);
-            break;
-        }
-      }
-    }
-    visual_cards += player_name + ":\n";
-    for(let i = 0; i < 4; i++){
-      // if(shape_list[j][i].length !== 0)
-      // console.log(shape[i] + ":" + shape_list[j][i]);
-      visual_cards += shape[i] + ":" + shape_list[i] + "\n";
-    }
-    return visual_cards;
-  }
-
   call_light(val, num, i) {
     let val_ary = [0, 0];
     let type = " btn_call_click";
@@ -92,7 +35,7 @@ class Board extends Component {
   }
 
   call_note(rec, num, p) {
-    let flower = ["♣", "♦", "♥", "♠", "N", "Pa"];
+    let flower = this.flower;
     let val = "";
     let note = "Bid: ";
     for (let i = 0; i < rec.call.length; i++) {
@@ -118,22 +61,78 @@ class Board extends Component {
       num = num < 10 ? "x0" + num.toString() : "x" + num.toString();
       if (arr.indexOf(num) == -1) {
         arr.push(num);
-      }
-      else {
+      } else {
         i--;
       }
     }
     return arr;
   }
 
-  change_card(rec) {
-    let hand = [...rec.hand_cards.p1];
-    let card = [rec.first_card, rec.first_get];
-    hand.push(card[0]);
-    hand.sort();
-    let indx = hand.indexOf(card[0]);
-    hand.splice(indx, 0, card[1]);
-    return [hand, indx];
+  change_card(rec, p, p1, p2) {
+    let hand = [[...rec.hand_cards.p1], [...rec.hand_cards.p2]];
+    let card = [rec.first_card, rec.first_get, rec.second_card, rec.second_get];
+    let role = (p == 0 && rec.go_first == p1) ? 0 : ((p == 1 && rec.go_first == p2) ? 0 : 2);
+    hand[p].push(card[role]);
+    hand[p].sort(function(a, b){return a-b});
+    let indx = hand[p].indexOf(card[role]);
+    hand[p].splice(indx + 1, 0, card[role + 1]);
+    return [hand[p], indx];
+  }
+
+  change_note(rec, num, p) {
+    let flower = this.flower.slice(0, 4).reverse();
+    let number = this.number;
+    let card = [-1, -1];
+    let note = "";
+    for (let i = 0; i < rec.change.length; i++) {
+      if (i <= num) {
+        if (rec.change[i].go_first == p) {
+          card[0] = rec.change[i].first_card;
+          card[1] = rec.change[i].first_get;
+        }
+        else {
+          card[0] = rec.change[i].second_card;
+          card[1] = rec.change[i].second_get;
+        }
+        note += flower[Math.floor(card[0] / 13)] + number[card[0] % 13] + "➝";
+        note += flower[Math.floor(card[1] / 13)] + number[card[1] % 13] + (i == rec.change.length - 1 ? "" : "..");
+      }
+    }
+    return note;
+  }
+
+  play_card(rec, i, p, p1, p2) {
+    let hand = [[...rec.play[i].hand_cards.p1], [...rec.play[i].hand_cards.p2]];
+    let card = [rec.play[i].first_play, rec.play[i].second_play];
+    let role = (p == 0 && rec.play[i].go_first == p1) ? 0 : ((p == 1 && rec.play[i].go_first == p2) ? 0 : 1);
+    hand[p].push(card[role]);
+    hand[p].sort(function(a, b){return a-b});
+    let indx = hand[p].indexOf(card[role]);
+    if (i != 0) {
+      i--;
+      let card1 = [rec.play[i].first_play, rec.play[i].second_play];
+      hand[p].push(card1[(p == 0 && rec.play[i].go_first == p1) ? 0 : ((p == 1 && rec.play[i].go_first == p2) ? 0 : 1)]);
+    }
+    return [hand[p], indx];
+  }
+
+  play_note(rec, num, p) {
+    let flower = this.flower.slice(0, 4).reverse();
+    let number = this.number;
+    let val = "";
+    let note = "";
+    for (let i = 0; i < rec.play.length; i++) {
+      if (i <= num) {
+        if (rec.play[i].go_first == p) {
+          val = rec.play[i].first_play;
+        }
+        else {
+          val = rec.play[i].second_play;
+        }
+        note += flower[Math.floor(val / 13)] + number[val % 13] + (i == rec.play.length - 1 ? "" : "➝");
+      }
+    }
+    return note;
   }
 
   Nextplay = () => {
@@ -193,16 +192,20 @@ class Board extends Component {
     }
   }
 
+  Closeplay = () => {
+    this.props.close();
+  }
+
   randerStage() {
     const {
       p1,
       p2,
       record
     } = this.props;
-    let play_card = this.play_card();
     let btn_style = "";
     let change = -1;
-    let change_sty = [-1, -1];
+    let btn_trump =[[1,2,3,4,5,6,7], ["c","d","h","s","n","p"], ["s","h","d","c","n"]];
+    let back = 0;
     // 喊牌介面
     if (this.state.stage === 1) {
       return <div className="pos_fixed">
@@ -226,13 +229,13 @@ class Board extends Component {
               <img src={this.images["PB.png"].default} className="img_card"></img>
             </button>
             <div className="zindex_10 top_240 left_c3 div_call">
-              {[1,2,3,4,5,6,7].map(nums => (
+              {btn_trump[0].map(nums => (
                 btn_style = "btn_call zindex_11 top_50 left_c" + nums.toString() + this.call_light(record.call[this.state.callIndex].call_val, nums - 1, 0),
                 <button className={btn_style}>
                   <img src={this.images["c" + nums.toString() + ".png"].default} className="img_call"></img>
                 </button>
               ))}
-              {["c","d","h","s","n","p"].map((num1, idx) => (
+              {btn_trump[1].map((num1, idx) => (
                 btn_style = "btn_call zindex_11 top_140 left_c" + (idx + 1).toString() + this.call_light(record.call[this.state.callIndex].call_val, idx, 1),
                 <button className={btn_style}>
                   <img src={this.images["c" + num1.toString() + ".png"].default} className="img_call"></img>
@@ -265,96 +268,111 @@ class Board extends Component {
           {}
         : 
           <>
-            {//this.change_card(record.change[this.state.changeIndex])[0].map((card, id) => (
-              record.change[this.state.changeIndex].hand_cards.p1.map((card, id) => (
-              change = this.change_card(record.change[this.state.changeIndex])[1],
-              change_sty[0] = (22 - (id > change ? id - 1 : id)),
-              change_sty[1] = (id > change ? id - 1 : id),
-              btn_style = "btn_card zindex_" + (22 - id).toString() + " top_25 left_c" + id.toString(),
-              //btn_style = "btn_card zindex_" + change_sty[0].toString() + " top_" + (id == (change + 1) ? 50 : 25).toString() + " left_c" + change_sty[1].toString() + (change == id ? " move_co" : (change == (id + 1) ? " move_ci" : "")),
+            {this.change_card(record.change[this.state.changeIndex], 0, p1, p2)[0].map((card, id) => (
+              change = this.change_card(record.change[this.state.changeIndex], 0, p1, p2)[1],
+              btn_style = "btn_card zindex_" + (22 - (id > change ? id - 1 : id)).toString() + " top_" + (id == (change + 1) ? 50 : 25).toString() + " left_c" + (id > change ? id - 1 : id).toString() + (id == change ? " move_co" : (id == (change + 1) ? (record.change[this.state.changeIndex].first_change_card == card ? " move_ci" : " move_pi") : "")),
               <button className={btn_style}>
                 <img src={this.images[card + ".png"].default} className="img_card" alt="card"></img>
               </button>
             ))}
-            {record.change[this.state.changeIndex].hand_cards.p2.map((card1, id1) => (
-              
-              btn_style = "btn_card zindex_" + (10 + id1).toString() + " top_525 left_c" + id1.toString(),
+            {this.change_card(record.change[this.state.changeIndex], 1, p1, p2)[0].map((card1, id1) => (
+              change = this.change_card(record.change[this.state.changeIndex], 1, p1, p2)[1],
+              btn_style = "btn_card zindex_" + (10 + (id1 > change ? id1 - 1 : id1)).toString() + " top_" + (id1 == (change + 1) ? 500 : 525).toString() + " left_c" + (id1 > change ? id1 - 1 : id1).toString() + (id1 == change ? " move_po" : (id1 == (change + 1) ? (record.change[this.state.changeIndex].first_change_card == card1 ? " move_ci" : " move_pi") : "")),
               <button className={btn_style}>
                 <img src={this.images[card1 + ".png"].default} className="img_card" alt="card"></img>
               </button>
             ))}
             <button className="btn_card zindex_22 top_275 left_c0">
-              <img src={this.images["PB.png"].default} className="img_card"></img>
+              <img src={this.images[(this.state.changeIndex == record.change.length - 1 ? "PZ" : "PB") + ".png"].default} className="img_card"></img>
             </button>
             <button className="btn_card zindex_22 top_275 left_c2 move_nt">
-              <img src={this.images[record.change[this.state.changeIndex].first_change_card + ".png"].default} className="img_card"></img>
+              <img src={this.images[(this.state.changeIndex == record.change.length - 1 ? "PZ" : record.change[this.state.changeIndex].first_change_card) + ".png"].default} className="img_card"></img>
             </button>
+            <div className="zindex_10 top_25 left_1270 div_user">
+                <img src={this.images[this.user_img[0] + ".png"].default} className="img_user"></img>
+                <p className="txt_st">{record.player.p1}</p>
+                <hr className="hr_user" />
+                <p className="txt_st1">{this.change_note(record, this.state.changeIndex, record.player.p1)}</p>
+                <p className="txt_st">{"Time: " + record.change[this.state.changeIndex].time_limit.p1}</p>
+            </div>
+            <div className="zindex_10 top_380 left_1270 div_user">
+                <img src={this.images[this.user_img[1] + ".png"].default} className="img_user"></img>
+                <p className="txt_st">{record.player.p2}</p>
+                <hr className="hr_user" />
+                <p className="txt_st1">{this.change_note(record, this.state.changeIndex, record.player.p2)}</p>
+                <p className="txt_st">{"Time: " + record.change[this.state.changeIndex].time_limit.p2}</p>
+            </div>
+            <div className={"zindex_22 div_trump top_" + (record.dealer == p1 ? 10 : 365).toString() + " left_1260"}>
+              <img src={this.images["t" + record.trump[0].toString() + ".png"].default} className="img_trump1"></img>
+              <img src={this.images["t" + btn_trump[2][record.trump[1]].toString() + ".png"].default} className="img_trump"></img>
+            </div>
           </>
         }
-        {console.log(record.change)}
-        
       </div>
     // 打牌介面
     } else if (this.state.stage === 3) {
-      return <div>
-        <div style={{flexDirection: "column"}}>
-          {record.play[this.state.playIndex] === undefined ?
-            <div></div>
-          :
-            <div>回合數: {this.state.playIndex + 1}&emsp;&emsp;先手：{record.play[this.state.playIndex].go_first}&emsp;&emsp;後手：{record.play[this.state.playIndex].go_first === p1 ? p2 : p1}</div>
-          }
-        </div>
-        <div className="background">
-        {console.log(record.play.length)}
-          <div className="hist-stytle"> 
-          </div>
-          <div className="board-row">
-            {record.play.length === 0 || !record.play[this.state.playIndex] ?
-            <div></div>
-            : 
-            record.play[this.state.playIndex].hand_cards.p1.map((card, _) => (
-              <div className="card">
-              <img src={this.images[card + ".png"].default} alt="card" width="35px" height="60px"/>
-              </div>
+      return <div className="pos_fixed">
+        {record.play.length === 0 || !record.play[this.state.playIndex] ?
+          <></>
+        : 
+          <>
+            {this.play_card(record, this.state.playIndex, 0, p1, p2)[0].map((card, id) => (
+              change = this.play_card(record, this.state.playIndex, 0, p1, p2)[1],
+              btn_style = (this.state.playIndex != 0 && id == this.play_card(record, this.state.playIndex, 0, p1, p2)[0].length - 1) ? "btn_card zindex_10 top_240 left_c8 move_ns" : "btn_card zindex_" + (22 - id).toString() + " top_25 left_c" + id.toString() + (id == change ? " move_co" : ""),
+              <button className={btn_style}>
+                <img src={this.images[card + ".png"].default} className="img_card" alt="card"></img>
+              </button>
             ))}
-          </div>
-          <div className="board-row">
-            {play_card}
-          </div>
-          <div className="board-row">
-            {record.play.length === 0 || !record.play[this.state.playIndex] ?
-            <div></div>
-            : 
-            record.play[this.state.playIndex].hand_cards.p2.map((card, _) => (
-              <div className="card">
-              <img src={this.images[card + ".png"].default} alt="card" width="35px" height="60px"/>
-              </div>
+            {this.play_card(record, this.state.playIndex, 1, p1, p2)[0].map((card1, id1) => (
+              change = this.play_card(record, this.state.playIndex, 1, p1, p2)[1],
+              btn_style = (this.state.playIndex != 0 && id1 == this.play_card(record, this.state.playIndex, 1, p1, p2)[0].length - 1) ? "btn_card zindex_10 top_310 left_c11 move_ns" : "btn_card zindex_" + (10 + id1).toString() + " top_525 left_c" + id1.toString() + (id1 == change ? " move_po" : ""),
+              <button className={btn_style}>
+                <img src={this.images[card1 + ".png"].default} className="img_card" alt="card"></img>
+              </button>
             ))}
-          </div>
-        </div>
+            <button className="btn_card zindex_22 top_275 left_c0">
+              <img src={this.images[(this.state.playIndex == 0 ? "PZ" : "PB") + ".png"].default} className="img_card"></img>
+            </button>
+            <div className="zindex_10 top_25 left_1270 div_user">
+                <img src={this.images[this.user_img[0] + ".png"].default} className="img_user"></img>
+                <p className="txt_st">{record.player.p1}</p>
+                <hr className="hr_user" />
+                <p className="txt_st1">{this.play_note(record, this.state.playIndex, record.player.p1)}</p>
+                <p className="txt_st">{"Score: " + record.play[this.state.playIndex].score.p1}</p>
+                <p className="txt_st">{"Time: " + record.play[this.state.playIndex].time_limit.p1}</p>
+            </div>
+            <div className="zindex_10 top_380 left_1270 div_user">
+                <img src={this.images[this.user_img[1] + ".png"].default} className="img_user"></img>
+                <p className="txt_st">{record.player.p2}</p>
+                <hr className="hr_user" />
+                <p className="txt_st1">{this.play_note(record, this.state.playIndex, record.player.p2)}</p>
+                <p className="txt_st">{"Score: " + record.play[this.state.playIndex].score.p2}</p>
+                <p className="txt_st">{"Time: " + record.play[this.state.playIndex].time_limit.p2}</p>
+            </div>
+            <div className={"zindex_22 div_trump top_" + (record.dealer == p1 ? 10 : 365).toString() + " left_1260"}>
+              <img src={this.images["t" + record.trump[0].toString() + ".png"].default} className="img_trump1"></img>
+              <img src={this.images["t" + btn_trump[2][record.trump[1]].toString() + ".png"].default} className="img_trump"></img>
+            </div>
+          </>
+        }
       </div>
     }
   }
 
   render() {
-    const {
-      p1,
-      p2,
-      record
-    } = this.props;
-    let shape = ['黑桃', '紅心', '方塊', '梅花', '無王'];
-    const images = this.importAll(require.context('./cards', false, /\.(png|jpe?g|svg)$/));
     return (
       <div className="board_bear">
         <div className="board_menu">
             <button className={this.state.stage === 1 ? "btn_page btn_page_click" : "btn_page"} onClick={() => this.setState({ stage: 1 })}>Bidding</button>
             <button className={this.state.stage === 2 ? "btn_page btn_page_click" : "btn_page"} onClick={() => this.setState({ stage: 2 })}>Exchanging</button>
             <button className={this.state.stage === 3 ? "btn_page btn_page_click" : "btn_page"} onClick={() => this.setState({ stage: 3 })}>Playing</button>
+            <button className="btn_pageR" onClick={this.Closeplay}>⨉</button>
             <button className="btn_pageR" onClick={this.Nextplay}>&gt;</button>
             <button className="btn_pageR" onClick={this.Backplay}>&lt;</button>
         </div>
-        {this.randerStage()}
-
+        <div className="board_site">
+          {this.randerStage()}
+        </div>
       </div>
     );
   }

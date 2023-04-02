@@ -10,7 +10,17 @@
 
 // console.log(isPasswordMatch); // tru
 
-const data = {"id":"play1","type":"round-robin","time_limit":3,"status":"prepare","create_time":"2021-06-15T12:34:03.823Z"}
-JSON.parse(data).forEach((row) =>
-    console.log(row)
-);
+// const data = {"id":"play1","type":"round-robin","time_limit":3,"status":"prepare","create_time":"2021-06-15T12:34:03.823Z"}
+// JSON.parse(data).forEach((row) =>
+//     console.log(row)
+// );
+
+const fs = require('fs');
+const path = require('path');
+const COMPETITIONSPATH = path.join(__dirname, './history/aaa.json');
+
+fs.readFile(COMPETITIONSPATH, "utf8", (err, data) => {
+    if (err) throw err;
+    const competitionsData = JSON.parse(data);
+    console.log(competitionsData.games);
+});

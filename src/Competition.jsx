@@ -102,50 +102,53 @@ class Competition extends Component {
     data.players.forEach((player) => {
       tmp_player_list[player] = undefined;
     });
-    let tmp_history_time = {};
-    Object.entries(data.games).map(([key, value]) => {
-      tmp_history_time[key] = { time: 0, max: value.length - 1 };
-      this.onUpdateBoard(key, value[0].hist);
-    });
+    // let tmp_history_time = {};
+    // Object.entries(data.games).map(([key, value]) => {
+    //   tmp_history_time[key] = { time: 0, max: value.length - 1 };
+    //   this.onUpdateBoard(key, value[0].hist);
+    // });
     this.setState({ 
       player_list: tmp_player_list, 
-      game_tree: data.game_tree, 
+      record: data.record,
+      board_end: data.board_end,
       scoreboard: data.scoreboard,
       one2onescore: data.one2onescore,
-      history: data.games,
-      history_time: tmp_history_time,
       initialize: true,
-      status: "ended"
+      status: "ended",
     });
   };
-  loadHistory = (game_id, time) => {
-    let tmp = this.state.history_time;
-    tmp[game_id].time = time;
-    this.onUpdateBoard(game_id, this.state.history[game_id][time].hist);
-    // this.onUpdateTimeLimit(
-    //   game_id,
-    //   this.state.history[game_id][time].time_limit,
-    //   this.state.history[game_id][time].time_limit
-    // );
-    this.onUpdateWinTimes(
-      game_id,
-      this.state.history[game_id][time].black.win_times,
-      this.state.history[game_id][time].white.win_times
-    );
-    this.setState({ history_time: tmp });
-  };
+  // loadHistory = (game_id, time) => {
+  //   let tmp = this.state.history_time;
+  //   tmp[game_id].time = time;
+  //   this.onUpdateBoard(game_id, this.state.history[game_id][time].hist);
+  //   // this.onUpdateTimeLimit(
+  //   //   game_id,
+  //   //   this.state.history[game_id][time].time_limit,
+  //   //   this.state.history[game_id][time].time_limit
+  //   // );
+  //   this.onUpdateWinTimes(
+  //     game_id,
+  //     this.state.history[game_id][time].black.win_times,
+  //     this.state.history[game_id][time].white.win_times
+  //   );
+  //   this.setState({ history_time: tmp });
+  // };
   
   async componentDidMount() {
     try {
+      console.log(this.props.match.params["id"])
       let data = await competition_info(this.props.match.params["id"]);
       data = JSON.parse(data);
       this.setState({
         type: data.type,
+        num: parseInt(data.num),
       });
+      console.log(data.status)
       if (data.status === "ended") {
         data = await competition_history(this.props.match.params["id"]);
         data = JSON.parse(data);
         this.initHistory(data);
+        console.log("OK")
       } else {
         this.ws = await ws_connect(
           this.props.match.params["id"],
@@ -186,7 +189,7 @@ class Competition extends Component {
             one2onescore={this.state.one2onescore}
             game_tree={this.state.game_tree}
             history_time={this.state.history_time}
-            loadHistory={this.loadHistory}
+            // loadHistory={this.loadHistory}
             player_name={this.state.player_name}
             num={this.state.num}
             competition_end={this.state.competition_end}

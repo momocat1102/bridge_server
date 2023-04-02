@@ -17,6 +17,7 @@ body {
     /* border: black 1px solid; */
     box-shadow: 0 1px 2px 0 rgb(0 0 0 / 15%);
     z-index: 10;
+    background-size: cover;
 }
 
 .header .logo-part {
@@ -50,7 +51,7 @@ body {
 
 .navbar a:hover,
 .navbar button:hover {
-    background-color: rgba(0, 0, 0, 0.05);
+    background-color: rgba(50, 75, 100, 0.2);
 }
 
 @media screen and (min-width: 501px) {
@@ -552,7 +553,8 @@ td {
 }
 
 .table-cell-slash {
-    background: linear-gradient( to right top, #fff 0%, #fff 49.9%, #000000 50%, #000000 51%, #fff 51.1%, #fff 100%);
+    background: linear-gradient( to right top, #fff 0%, #fff 49.9%, #b2b2b2 50%, #b2b2b2 51%, #fff 51.1%, #fff 100%) no-repeat;
+    background-size: cover;
 }
 
 .table-freeze-first-row {
@@ -998,6 +1000,7 @@ td {
 
 
 .board_bear {
+    zoom: 80%;
     width: 100%;
     height: 800px;
     background-color:#F4F4F4;
@@ -1006,6 +1009,9 @@ td {
     width:100%; 
     height:60px; 
     background-color: #008B8B;
+}
+.board_site {
+    margin-left: calc((100% - 1480px) / 2); 
 }
 .pos_fixed {
     position: fixed;
@@ -1094,6 +1100,19 @@ td {
     height: 50px;
     color: #195764; 
 }
+.img_trump {
+    border-style: none;
+    width: 36px;
+    height: 36px;
+    padding: 18px 0 0 0;
+    margin-left: -2px;
+}
+.img_trump1 {
+    border-style: none;
+    width: 25.5px;
+    height: 36px;
+    padding: 18px 0 0 6px;
+}
 
 .zindex_10 { z-index: 10; position:absolute; }
 .zindex_11 { z-index: 11; position:absolute }
@@ -1114,6 +1133,7 @@ td {
 .top_140 { top: 140px; }
 .top_240 { top: 240px; }
 .top_275 { top: 275px; }
+.top_310 { top: 310px; }
 .top_500 { top: 500px; }
 .top_525 { top: 525px; }
 
@@ -1133,13 +1153,15 @@ td {
 
 .left_1270 { left:1270px; }
 .top_380 { top: 380px; }
+.top_10 { top: 10px; }
+.top_365 { top: 365px; }
+.left_1260 {left:1260px;}
 
 .move_co {
     animation: move_co 1s forwards;
 }
 @keyframes move_co {
     from {
-        top:25px;
     }
     to {
         top:240px;
@@ -1151,7 +1173,6 @@ td {
 }
 @keyframes move_po {
     from {
-        top:525px;
     }
     to {
         top:310px;
@@ -1160,28 +1181,26 @@ td {
 }
 .move_ci {
     animation: move_ci 1s forwards;
+    animation-direction: reverse;
 }
 @keyframes move_ci {
     from {
-        top:275px;
-        left:205px;
     }
     to {
-        top:50px;
-        left:475px;
+        top:275px;
+        left:205px;
     }
 }
 .move_pi {
     animation: move_pi 1s forwards;
+    animation-direction: reverse;
 }
 @keyframes move_pi {
     from {
-        top:275px;
-        left:25px;
     }
     to {
-        top:500px;
-        left:565px;
+        top:275px;
+        left:25px;
     }
 }
 .move_nt {
@@ -1196,11 +1215,26 @@ td {
         height: 175px;
     }
 }
+.move_ns {
+    animation: move_ns 1s forwards;
+}
+@keyframes move_ns {
+    from {
+    }
+    to {
+        top:275px;
+        left:25px;
+    }
+}
 
 .txt_st {
     word-wrap:break-word;
     font-size: 16px;
     font-weight: 900;
+}
+.txt_st1 {
+    word-wrap:break-word;
+    font-size: 14px;
 }
 
 .div_user {
@@ -1220,4 +1254,102 @@ td {
     box-shadow:4px 4px 1px darkgrey;
     padding: 25px;
     background-color: #2F4F4F;
+}
+.div_trump {
+    border:solid 4px #008B8B; 
+    border-radius: 99px; 
+    width:72px; 
+    height:72px; 
+    box-shadow:4px 4px 1px darkgrey;
+    background-color: white;
+}
+.div_height {
+    height:295px; 
+    overflow:auto;
+    vertical-align: top;
+}
+.width_10 { width: 10%; }
+.width_15 { width: 15%; }
+.width_25 { width: 25%; }
+.width_30 { width: 30%; }
+.width_100 { width: 100%; }
+
+.table_bear {
+    border-collapse: collapse;
+    padding: 5px 0;
+    width: 100%;
+}
+.table_bear_hr {
+    border-style: none;
+    height: 40px;
+    font-weight: 900;
+    color: white;
+}
+.table_bear_tr {
+    height: 35px;
+    color: black;
+    border-style: none;
+    border: solid 3px rgb(244,244,244);
+}
+.table_bear_tr1 {
+    height: 35px;
+    color: black;
+    border-style: none;
+    border-style: none;
+}
+.table_bear tr:nth-child(even) { background: #C8C4BF }
+.table_bear tr:nth-child(odd) { background: white }
+.table_bear tr:hover { background-color: #FADAC9; }
+.margintop_50 { margin-top: 50px; }
+.btn_bottom {
+    width: 100%;
+    margin-top: 50px; 
+    text-align: center;
+}
+.btn {
+    background: #3498db;
+    background-image: -webkit-linear-gradient(top, #3498db, #2980b9);
+    background-image: -moz-linear-gradient(top, #3498db, #2980b9);
+    background-image: -o-linear-gradient(top, #3498db, #2980b9);
+    background-image: linear-gradient(to bottom, #3498db, #2980b9);
+    border-radius: 100px; color: #ffffff; 
+    padding: 10px 20px 10px 20px; text-decoration: none;
+    font-size: 20px; 
+    width: 175px;
+    border-color:transparent;
+}
+.btn:hover {
+    background: #3cb0fd;
+    background-image: -webkit-linear-gradient(top, #3cb0fd, #3498db);
+    background-image: -moz-linear-gradient(top, #3cb0fd, #3498db);
+    background-image: -o-linear-gradient(top, #3cb0fd, #3498db);
+    background-image: linear-gradient(to bottom, #3cb0fd, #3498db);
+    background-image: linear-gradient(to bottom, #3cb0fd, #3498db);
+    text-decoration: none;
+    font-size:20px; 
+    width: 175px;
+    border-color:transparent;
+}
+.btn1 {
+    background: #34DB77;
+    background-image: -webkit-linear-gradient(top, #34DB77, #29B968);
+    background-image: -moz-linear-gradient(top, #34DB77, #29B968);
+    background-image: -o-linear-gradient(top, #34DB77, #29B968);
+    background-image: linear-gradient(to bottom, #34DB77, #29B968);
+    border-radius: 100px; color: #ffffff;
+    padding: 10px 20px 10px 20px; text-decoration: none;
+    font-size:20px; 
+    width: 175px;
+    border-color:transparent;
+}
+.btn1:hover {
+    background: #3EFD6A;
+    background-image: -webkit-linear-gradient(top, #3EFD6A, #34DB77);
+    background-image: -moz-linear-gradient(top, #3EFD6A, #34DB77);
+    background-image: -o-linear-gradient(top, #3EFD6A, #34DB77);
+    background-image: linear-gradient(to bottom, #3EFD6A, #34DB77);
+    text-decoration: none;
+    font-size:20px; 
+    width: 175px;
+    border-color:transparent;
 }

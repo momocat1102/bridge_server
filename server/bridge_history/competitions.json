@@ -1,1 +1,1 @@
-{"play1":{"id":"play1","type":"round-robin","time_limit":"3","status":"prepare","num":"10","create_time":"2023-03-28T19:59:38.841Z"}}
+{"play1":{"id":"play1","type":"round-robin","time_limit":"3","status":"ended","num":"10","create_time":"2023-03-28T19:59:38.841Z"},"test":{"id":"test","type":"round-robin","time_limit":"3","status":"start","num":"10","create_time":"2023-03-29T15:03:46.793Z"}}

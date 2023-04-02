@@ -23,7 +23,7 @@ class RoundRobinLayout extends Component {
     this.contextMenuHandler = this.contextMenuHandler.bind(this);
     this.handleClick = this.handleClick.bind(this);
   }
-  
+
   open_modal(player_a, player_b) {
     this.modal_player_a = player_a;
     this.modal_player_b = player_b;
@@ -229,6 +229,7 @@ class RoundRobinLayout extends Component {
                   ]
                   // `${this.modal_player_a}_${this.modal_player_b}_${this.props.index}`]
                 }
+                close = {this.open_modal}
               ></Board>
             }
             model_footer={
@@ -242,8 +243,8 @@ class RoundRobinLayout extends Component {
                 <div></div>
               )
             }
-            width={"52%"}
-            margin_top={"1%"}
+            width={"100%"}
+            margin_top={"-53px"}
             close={this.open_modal}
             download={this.props.status === "end" ? true : false}
             download_cb={(e) =>

@@ -2,60 +2,52 @@
 
 使用Web Socket通訊，URL：ws://163.22.21.143:8082
 
+## Requirements
+* Python 3
+* websocket-client >= 0.59.0
+
 ## 加入競賽
 
-token：由Google OAuth取得，client credential如下連結。
+Player ID：請傳入您的名稱 注意，名稱不可重複。
+Competition ID：對局名稱，請傳入要進行的對局之名稱。
 
-[OAuth2.0 client credential](client_secret)
-
-competition：競賽頁面顯示的ID。
 
 ```json
 {
     "action": "join",
     "data": {
         "source": "player",
-        "token": "[token]",
+        "player_id": "[Player ID]",
         "competition": "[Competition ID]"
     }
 }
 ```
+## Bot版本之Socket
 
-傳送不合法的token，Server會拒絕Client加入競賽。
+請根據sample bot的格式撰寫您的BOT，然後引入您的BOT執行程式即可。
 
-```json
-{
-    "action": "invalid_email"
-}
+```python
+from sample_bot import SampleBot
+
+bot = SampleBot()
 ```
 
-## Play
+```python
+aaa = CompetitionSocket('test', 'name')
+```
+[Socket](socket)
 
-通知Client某賽局ID需要落子。
+## EXE版本之Socket
 
-```json
-{
-    "action": "request_move",
-    "data": {
-        "board": ["[二維list]"],
-        "color": "[輪到哪個顏色]",
-        "game_id": "[Game ID]"
-    }
-}
+用於之前使用EXE來執行之程式，請先引入您的EXE檔再執行程式，有依照之前的規則即可正常運行。
+
+```python
+exe_path = "./HoneymoonBridgeTest.exe"
 ```
 
-Client傳送落子資訊給Server，x代表由上而下的index(從0開始)，y代表由左而右的index(從0開始)
-
-```json
-{
-    "action": "move",
-    "data": {
-        "game_id": "[Game ID]",
-        "position": {
-            "x": "[x position]",
-            "y": "[y position]"
-        },
-        "board_check": "將board轉成一維並用逗號將element隔開後轉成字串"
-    }
-}
+```python
+aaa = CompetitionSocket('test', 'name')
 ```
+
+[Socket for exe](socket_for_exe)
+

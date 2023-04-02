@@ -133,6 +133,7 @@ class CompetitionItem extends Component {
       </>
     ) : (
       <>
+        {console.log("test")}
         <Link to={"/competition/" + name} className="competition-item">
           <i
             className="far fa-times-circle fa-lg"

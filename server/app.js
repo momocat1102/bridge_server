@@ -53,7 +53,7 @@ const removeCompetition = (competition_id) => {
 fs.readFile(COMPETITIONSFILE, "utf8", (err, data) => {
     data = JSON.parse(data);
     Object.values(data).forEach((d) => {
-        console.log(d)
+        // console.log(d)
         if(["prepare", "start"].includes(d.status)){
             competitions[d.id] = new Competition(
                 d.id,
@@ -67,12 +67,12 @@ fs.readFile(COMPETITIONSFILE, "utf8", (err, data) => {
     });
 });
 
-console.log(competitions)
+// console.log(competitions)
 /* WS server */
 const wsserver = new SocketServer({ server });
 wsserver.on("connection", (ws) => {
     console.log('Client connected')
-    console.log(competitions)
+    // console.log(competitions)
     let handler = (message) => {
         try {
             let data = JSON.parse(message.data);
@@ -139,7 +139,7 @@ wsserver.on("connection", (ws) => {
 // });
 
 app.post("/start_competition", function(req, res) {
-    console.log(req.fields)
+    // console.log(req.fields)
     if (req.fields.competition_name.includes("test")) {
         if (Object.keys(competitions[req.fields.competition_name].players).length < 2) {
             res.statusCode = 400;
@@ -199,7 +199,7 @@ app.post("/competition_list", function(req, res) {
 // 給React用的
 app.post("/competition_info", function(req, res) {
     let competitionsData = JSON.parse(fs.readFileSync(COMPETITIONSFILE));
-    res.end(JSON.stringify(competitionsData));
+    res.end(JSON.stringify(competitionsData[req.fields.competition_name]));
 });
 
 app.post("/create_competition", function(req, res) {
@@ -271,19 +271,82 @@ app.post("/delete_competition", function(req, res) {
     }
 });
 
+app.post("/competition_history", function(req, res) {
+    // console.log(req.fields)
+    let rawdata = fs.readFileSync(`server/bridge_history/${req.fields.competition_id}.json`);
+    res.end(rawdata);
+});
+
+app.post("/download_history", function(req, res) {
+    res.download(`server/bridge_history/${req.fields.competition_id}.zip`);
+});
+
 app.post("/remove_player", function(req, res) {
+    // console.log(req.fields);
     if (req.fields.Authorization !== undefined) {
         let token = req.fields.Authorization.replace("Bearer ", "");
         try {
             jwt.verify(token, SERVER_SECRET);
+            console.log("remove_player")
             competitions[req.fields.competition].delete_player(req.fields.player);
             res.end();
         } catch (e) {
+            console.log(e);
             res.statusCode = 401;
             res.end(e.message);
         }
     } else {
         res.end("null authorization");
+    }
+});
+
+
+
+app.post("/restart_game", function(req, res) {
+    // console.log(req.fields);
+    if (req.fields.competition_name.includes("test")) {
+        if (
+            competitions[req.fields.competition_name] !== undefined &&
+            competitions[req.fields.competition_name].games[req.fields.game_id] !== undefined &&
+            !competitions[req.fields.competition_name].games[req.fields.game_id].is_end
+        ) {
+            // competitions[req.fields.competition_name].games[req.fields.game_id].restart_promise = true;
+            competitions[req.fields.competition_name].games[
+                req.fields.game_id
+            ].cancel_request(game.CANCEL_RESTART_GAME);
+            res.end();
+        } else {
+            res.statusCode = 400;
+            res.end("game ended");
+        }
+    } else {
+        if (req.fields.Authorization !== undefined) {
+            let token = req.fields.Authorization.replace("Bearer ", "");
+            try {
+                jwt.verify(token, SERVER_SECRET);
+                if (
+                    competitions[req.fields.competition_name] !== undefined &&
+                    competitions[req.fields.competition_name].games[req.fields.game_id] !== undefined &&
+                    !competitions[req.fields.competition_name].games[req.fields.game_id].is_end
+                ) {
+                    // competitions[req.fields.competition_name].games[req.fields.game_id].restart_promise = true;
+                    competitions[req.fields.competition_name].games[
+                        req.fields.game_id
+                    ].cancel_request(game.CANCEL_RESTART_GAME);
+                    res.end();
+                } else {
+                    res.statusCode = 400;
+                    res.end("game ended");
+                }
+            } catch (e) {
+                console.log(e);
+                res.statusCode = 401;
+                res.end(e.message);
+            }
+        } else {
+            res.statusCode = 401;
+            res.end("null authorization");
+        }
     }
 });
 

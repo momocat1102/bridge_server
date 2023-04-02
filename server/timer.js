@@ -38,7 +38,7 @@ class Timer {
         clearInterval(this.clock);
         this.times -= new Date() - this.date - this.ticks * 1000;
         if (this.times <= 0) {
-            this.reject();
+            this.reject("time out");
             this.callback(0);
         }
     };

@@ -17,11 +17,11 @@ import rule5 from "./DocumentComponents/documents/rule5.jpg";
 import rule6 from "./DocumentComponents/documents/rule6.jpg";
 import protocol from "./DocumentComponents/documents/protocol.md";
 import clientCredential from "./client_secret.json";
-import download_Python from "./DocumentComponents/documents/download_Python.md";
+import download_Python from "./DocumentComponents/documents/download_sample_bot.md";
 import AIGamePlatform from "./AIGamePlatform.zip";
-import sample from "./sample.zip";
-import sample_dl from "./sample_dl.zip";
-import sample_GUI from "./sample_GUI.zip";
+import socket from "./socket.zip";
+import socket_for_exe from "./socket_for_exe.zip";
+import sample_bot from "./sample_bot.zip";
 import download_CPlusPlus from "./DocumentComponents/documents/download_CPlusPlus.md";
 import download_Java from "./DocumentComponents/documents/download_Java.md";
 import feedback from "./DocumentComponents/documents/feedback.md";
@@ -50,9 +50,9 @@ class Document extends Component {
           ext: ".json",
         },
         AIGamePlatform: { href: AIGamePlatform, ext: ".zip" },
-        sample: { href: sample, ext: ".zip" },
-        sample_dl: { href: sample_dl, ext: ".zip" },
-        sample_GUI: { href: sample_GUI, ext: ".zip" }
+        socket: { href: socket, ext: ".zip" },
+        socket_for_exe: { href: socket_for_exe, ext: ".zip" },
+        sample_bot: { href: sample_bot, ext: ".zip" },
       },
     };
   }
@@ -72,7 +72,7 @@ class Document extends Component {
       <div className="document">
         <div className="side-menu">
           <div style={{ padding: "0.5rem 2rem 0.5rem 1.5rem" }}> </div>
-          <Item text={"黑白棋規則"} link={"/document/黑白棋規則"}></Item>
+          <Item text={"蜜月橋牌規則"} link={"/document/蜜月橋牌規則"}></Item>
           <Item text={"通訊協定"} link={"/document/通訊協定"}></Item>
           <Menu
             text={"下載"}
@@ -86,7 +86,7 @@ class Document extends Component {
         </div>
         <div className="content">
           <Switch>
-            <Route path="/document/黑白棋規則">
+            <Route path="/document/蜜月橋牌規則">
               <ReactMarkdown
                 components={{
                   img: (props) => <img src={this.state.img[props.src]} alt="" />,

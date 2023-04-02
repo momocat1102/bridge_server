@@ -1,4 +1,4 @@
-import websocket, threading, json, numpy as np
+import websocket, threading, json, time, numpy as np
 from sample_bot import SampleBot
 
 bot = SampleBot()
@@ -44,19 +44,21 @@ class CompetitionSocket(websocket.WebSocketApp):
             pass
         self.ws=None
         print("### closed ###")
+        # time.sleep(5)
+        # print('REOPEN')
+        # self.run_forever()
     
     
     def on_message(self, ws, message):
         print(message)
         data=json.loads(message)
-        # print(data['name'], type(data['id']))
-        if data['id'] == 0:
+        if data['id'] == 0: # READY
             res={
                 'id': data['id'],
                 'name': self.player_id
             }
             ws.send(json.dumps(res))
-        elif data['id'] == 1:  # reset
+        elif data['id'] == 1: # RESET
             bot.reset()
             res={
                 'id': data['id'],
@@ -64,7 +66,7 @@ class CompetitionSocket(websocket.WebSocketApp):
                 'reset': 'success'
             }
             ws.send(json.dumps(res))
-        elif data['id'] == 2:
+        elif data['id'] == 2: # DEAL
             bot.my_hand = data['data']['hand_card']
             bot.deal_init()
             print(bot.my_hand)
@@ -73,7 +75,7 @@ class CompetitionSocket(websocket.WebSocketApp):
                 'name': self.player_id
             }
             ws.send(json.dumps(res))
-        elif data['id'] == 3:
+        elif data['id'] == 3: # CALL
             if data['data']['call'] == 0:
                 my_call = bot.call_card(-1)
             else:
@@ -84,7 +86,7 @@ class CompetitionSocket(websocket.WebSocketApp):
                 'player_call': my_call
             }
             ws.send(json.dumps(res))
-        elif data['id'] == 4:
+        elif data['id'] == 4: # CALL_RESULT
             bot.trump = (data['data']['result'] % 5) * (-1) + 4
             bot.decraler_contract = (data['data']['result'] - 1) // 5 + 7
             res={
@@ -92,7 +94,7 @@ class CompetitionSocket(websocket.WebSocketApp):
                 'name': self.player_id
             }
             ws.send(json.dumps(res))
-        elif data['id'] == 5:
+        elif data['id'] == 5: # CHANGE_FIRST
             my_change = bot.change_card(revealed_card=data['data']['change_card'], oppo_card=-1)
             res={
                 'id': data['id'],
@@ -100,7 +102,7 @@ class CompetitionSocket(websocket.WebSocketApp):
                 'player_card_for_change': my_change
             }
             ws.send(json.dumps(res))
-        elif data['id'] == 6:
+        elif data['id'] == 6: # CHANGE_SECOND
             my_change = bot.change_card(revealed_card=data['data']['change_card'], oppo_card=data['data']['opp_card'])
             res={
                 'id': data['id'],
@@ -108,25 +110,22 @@ class CompetitionSocket(websocket.WebSocketApp):
                 'player_card_for_change': my_change
             }
             ws.send(json.dumps(res))
-        elif data['id'] == 7:
+        elif data['id'] == 7: # CHANGE_RESULT
             bot.dealchange(data['data']['player_get'], data['data']['opp_card'])
             res={
                 'id': data['id'],
                 'name': self.player_id
             }
-            print(res)
             ws.send(json.dumps(res))
-        elif data['id'] == 8:
-            print("test")
+        elif data['id'] == 8: # PLAY_CARD_FIRST
             my_play = bot.play()
-            print(my_play)
             res={
                 'id': data['id'],
                 'name': self.player_id,
                 'player_play': my_play
             }
             ws.send(json.dumps(res))
-        elif data['id'] == 9:
+        elif data['id'] == 9: # PLAY_CARD_SECOND
             my_play = bot.play(data['data']['opp_play'])
             res={
                 'id': data['id'],
@@ -134,21 +133,20 @@ class CompetitionSocket(websocket.WebSocketApp):
                 'player_play': my_play
             }
             ws.send(json.dumps(res))
-        elif data['id'] == 10:
+        elif data['id'] == 10: # PLAY_CARD_RESULT
             bot.play_result(data['data']['opp_card'], data['data']['result'])
             res={
                 'id': data['id'],
                 'name': self.player_id
             }
             ws.send(json.dumps(res))
-        elif data['id'] == 11:
-            # print(data['data']['result'])
+        elif data['id'] == 11: # GAME_OVER
             res={
                 'id': data['id'],
                 'name': self.player_id
             }
             ws.send(json.dumps(res))
-        elif data['id'] == 12: # change_finall
+        elif data['id'] == 12: # CHANGE_FINAL
             bot.deal_play()
             res={
                 'id': data['id'],
@@ -156,17 +154,14 @@ class CompetitionSocket(websocket.WebSocketApp):
                 'connect': 'success'
             }
             ws.send(json.dumps(res))
-        elif data['id'] == 13: # test
-            print("test")
-            print(bot.my_hand)
-            # print(data['data']['data'] + ' is success.')
+        elif data['id'] == 13: # TEST
             res={
                 'id': data['id'],
                 'player_name': self.player_id,
                 'connect': 'success'
             }
             ws.send(json.dumps(res))
-        elif data['id'] == 14:
+        elif data['id'] == 14: # PHASE_AND_PLAYER_STATUS
             # 傳送目前階段及先後手
             res={
                 'id': data['id'],
@@ -179,7 +174,5 @@ class CompetitionSocket(websocket.WebSocketApp):
         self.ws=None
         print(error)
 
-# g = "3 4 5 6 7 8 9"
-# print(list(g))
 
-aaa=CompetitionSocket('play1', 'test2')
+aaa = CompetitionSocket('test', 'test2')

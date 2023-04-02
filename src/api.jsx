@@ -66,15 +66,16 @@ const competition_history = async (competition_id) => {
   });
 };
 
-const download_history = async (competition_id, game_id, filename) => {
+const download_history = async (competition_id) => {
+  // console.log(competition_id)
   return new Promise((resolve, reject) => {
     let formData = new FormData();
     formData.append("competition_id", competition_id);
-    formData.append("game_id", game_id);
+    // formData.append("game_id", game_id);
     fetch(config.server_url + "/download_history", {
       method: "POST",
       header: {
-        "Content-Type": "multipart/form-data",
+        "Content-Type": "application/zip",
       },
       body: formData,
     })
@@ -87,7 +88,7 @@ const download_history = async (competition_id, game_id, filename) => {
       })
       .then((blob) => {
         if (blob !== undefined) {
-          require("downloadjs")(blob, filename, "text/plain");
+          require("downloadjs")(blob, `${competition_id}.zip`, "application/zip");
           resolve();
         }
       });
