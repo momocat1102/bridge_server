@@ -993,17 +993,24 @@ td {
 }
 
 
-
-
-
-
-
-
 .board_bear {
-    zoom: 80%;
     width: 100%;
     height: 800px;
     background-color:#F4F4F4;
+}
+@media screen and (min-width: 1480px) { 
+    .board_bear { zoom: 100%; } 
+} 
+@media screen and (max-width: 1500px) { 
+    .board_bear { zoom: 80%; } 
+} 
+.widget_bear {
+    background-color: #008B8B;
+    color: white;
+}
+.logo_bear {
+    margin: -15px 0 10px 0;
+    border-radius: 10px;
 }
 .board_menu {
     width:100%; 
@@ -1272,6 +1279,7 @@ td {
 .width_15 { width: 15%; }
 .width_25 { width: 25%; }
 .width_30 { width: 30%; }
+.width_75 { width: 75%; }
 .width_100 { width: 100%; }
 
 .table_bear {
@@ -1294,7 +1302,6 @@ td {
 .table_bear_tr1 {
     height: 35px;
     color: black;
-    border-style: none;
     border-style: none;
 }
 .table_bear tr:nth-child(even) { background: #C8C4BF }

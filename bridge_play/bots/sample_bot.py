@@ -110,10 +110,10 @@ class SampleBot:
         self.my_hand.remove(my_play)
         
         return my_play
-    def play_result(oppo_play, result):
+    def play_result(self, oppo_play, result):
         '''
             oppo_play: 剛才對手出的牌
             result:    這一輪的結果，0為輸，1為贏
             這邊在每次打牌後會呼叫，可以知道打牌後的結果和對手出的牌，因為如果自己是先手，不會知道對手出的牌
         '''
-        pass
+        print(result)

@@ -4,6 +4,7 @@ import Article from "./IntroductionComponents/Article";
 import SideWidget from "./IntroductionComponents/SideWidget";
 import TableWidgetContent from "./IntroductionComponents/TableWidgetContent";
 import PureWidgetContent from "./IntroductionComponents/PureWidgetContent";
+import logoBar from "./logobar.png";
 
 class Introduction extends Component {
   constructor() {
@@ -29,14 +30,15 @@ class Introduction extends Component {
     const tmp2 = [];
     return (
       <div className="introduction">
-        <div className="bulletin">
+        <div className="bulletin width_75">
           {this.state.articles.map((article, index) => (
             <div key={index} className="article">
+              <img src={logoBar} className="width_100 logo_bear"></img>
               <Article article={article}></Article>
             </div>
           ))}
         </div>
-        <div className="side-widget">
+        <div className="side-widget width_25">
           <SideWidget
             header={"近期賽事"}
             content={<PureWidgetContent content={tmp2}></PureWidgetContent>}

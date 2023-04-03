@@ -240,7 +240,6 @@ class Competition {
             this.hist.board_end[game_id] = true;
         } else if (type === 'download') {
             let mkdirp = require('mkdirp');
-            // if (!this.competition_id.includes("test")) {
             mkdirp(`${COMPETITIONSPATH}${this.competition_id}`, (err) => {
                 if (err)
                     console.log(err)
@@ -250,6 +249,14 @@ class Competition {
 
                 }
             })
+            // if (!this.competition_id.includes("test")) {
+            
+            // mkdirp(`${COMPETITIONSPATH}${this.competition_id}`).catch(err => {
+            //     console.log(err);
+            //     }).then(p => {
+            //         console.log("made dir staring with");
+            //         fs.writeFileSync(`${COMPETITIONSPATH}${this.competition_id}/${game_id}.txt`, data);
+            //     })
         }
         // }
     };

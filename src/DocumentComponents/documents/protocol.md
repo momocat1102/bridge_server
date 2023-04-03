@@ -1,6 +1,6 @@
 # 通訊協定
 
-使用Web Socket通訊，URL：ws://163.22.21.143:8082
+使用Web Socket通訊，URL：ws://163.22.22.143:6671
 
 ## Requirements
 * Python 3

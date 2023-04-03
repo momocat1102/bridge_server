@@ -53,7 +53,7 @@ class SampleBot:
             if oppo_calls >= self.calling_suit:
                 my_call = PASS
                 # 叫牌時的花色排序為梅花->黑桃，但其他時候的花色排序為黑桃->梅花，因此這裡要做轉換
-                self.trump = (oppo_calls % 5) * (-1) + 4
+                # self.trump = (oppo_calls % 5) * (-1) + 4
                 self.decraler_contract = (oppo_calls - 1) // 5 + 7
                 
             else:
@@ -89,11 +89,11 @@ class SampleBot:
             
         return can_play_list
     
-    def dealchange(self, myget, oppoget, oppo_change):  
+    def dealchange(self, myget, oppo_change):  
         '''
             myget:       自己得到的牌
-            oppoget:     對手得到的牌(若換牌是贏的就不會知道，不知道的話為-1)
             oppo_change: 對手在這次換牌所出的牌
+            oppoget:     對手得到的牌(若換牌是贏的就不會知道，不知道的話為-1)
             這邊在每次換牌後會呼叫，可以知道換牌後的結果，並更新自己的參數、狀態
         '''
         self.my_hand.append(myget)
@@ -122,7 +122,15 @@ class SampleBot:
         # 將出掉的牌從手牌中移除   
         self.my_hand.remove(my_play)
         
-        return my_play      
+        return my_play
+    def play_result(self, oppo_play, result):
+        '''
+            oppo_play: 剛才對手出的牌
+            result:    這一輪的結果，0為輸，1為贏
+            這邊在每次打牌後會呼叫，可以知道打牌後的結果和對手出的牌，因為如果自己是先手，不會知道對手出的牌
+        '''
+        print(result)
+    
 ```
 
 

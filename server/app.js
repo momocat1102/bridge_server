@@ -16,7 +16,7 @@ const ADMIN_USERNAME =
 const ADMIN_PASSWORD =
     "$2b$10$vQyoYdIcVzcmmNDh0eo.YOlhgBYYyqZ/wRHtz1M0HuSWy4Ic2H8HW"; //109ncnucsie
 
-const COMPETITIONSFILE = "server/bridge_history/competitions.json";
+const COMPETITIONSFILE = "./server/bridge_history/competitions.json";
 // const OAuthClientID =
 //     "272292807664-ij5jkhcmhjft8q18s644j7msk8f7688b.apps.googleusercontent.com";
 // const client = new OAuth2Client(OAuthClientID);
@@ -38,8 +38,8 @@ app.post("/admin_login", function(req, res) {
     }
 });
 // 監聽
-const server = app.listen(8082, function() {
-    console.log("start server on port 8082");
+const server = app.listen(6671, function() {
+    console.log("start server on port 6671");
 });
 
 
@@ -273,12 +273,12 @@ app.post("/delete_competition", function(req, res) {
 
 app.post("/competition_history", function(req, res) {
     // console.log(req.fields)
-    let rawdata = fs.readFileSync(`server/bridge_history/${req.fields.competition_id}.json`);
+    let rawdata = fs.readFileSync(`./server/bridge_history/${req.fields.competition_id}.json`);
     res.end(rawdata);
 });
 
 app.post("/download_history", function(req, res) {
-    res.download(`server/bridge_history/${req.fields.competition_id}.zip`);
+    res.download(`./server/bridge_history/${req.fields.competition_id}.zip`);
 });
 
 app.post("/remove_player", function(req, res) {

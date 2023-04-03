@@ -29,18 +29,6 @@ class PlayList extends Component {
     this.contextMenuHandler = this.contextMenuHandler.bind(this);
   }
 
-  componentDidMount() {
-    const zipFilePath = "bridge_history/" + this.props.competition_id + ".zip";
-    import(`./${zipFilePath}`)
-    .then((module) => {
-      this.setState({ zipFile: module.default });
-      console.log(module);
-    })
-    .catch((err) => {
-      console.error(err);
-    });
-    // this.setState({ zipFile: zipFilePath });
-  }
 
   open_modal(player_a, player_b, nu) {
     this.modal_player_a = player_a;

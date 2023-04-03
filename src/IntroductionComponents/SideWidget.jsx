@@ -5,7 +5,7 @@ class SideWidget extends Component {
   render() {
     return (
       <div className="widget">
-        <div className="widget-header">
+        <div className="widget-header widget_bear">
           {this.props.header}
         </div>
         <div className="widget-content">

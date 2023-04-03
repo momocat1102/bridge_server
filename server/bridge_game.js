@@ -539,7 +539,7 @@ class game{
                 throw new Error("There are two same cards");
         }
         else{
-            if(Math.floor(defensive) === this.trump)
+            if(Math.floor(defensive / 13) === this.trump)
                 return 0;
             else
                 return 1;
