@@ -98,7 +98,6 @@ class Board extends Component {
 
   change_note(rec, num, p) {
     let flower = this.flower.slice(0, 4).reverse();
-    console.log(flower);
     let number = this.number;
     let card = [-1, -1];
     let note = [];
@@ -245,7 +244,6 @@ class Board extends Component {
     let btn_style = "";
     let change = -1;
     let btn_trump =[[1,2,3,4,5,6,7], ["c","d","h","s","n","p"], ["s","h","d","c","n"]];
-    let back = 0;
     // 喊牌介面
     if (this.state.stage === 1) {
       return <div className="pos_fixed">
@@ -346,7 +344,13 @@ class Board extends Component {
               <img src={this.images["t" + record.trump[0].toString() + ".png"].default} className="img_trump1"></img>
               <img src={this.images["t" + btn_trump[2][record.trump[1]].toString() + ".png"].default} className="img_trump"></img>
             </div>
-          </>
+			<div className={"zindex_22 top_135 left_1390"}>
+              <img src={this.images["p" + (record.change[this.state.changeIndex].go_first == p1 ? "1" : "2") + ".png"].default}></img>
+            </div>
+            <div className={"zindex_22 top_490 left_1390"}>
+              <img src={this.images["p" + (record.change[this.state.changeIndex].go_first == p2 ? "1" : "2") + ".png"].default}></img>
+            </div>												 
+		  </>
         }
       </div>
     // 打牌介面
@@ -385,7 +389,7 @@ class Board extends Component {
                 <img src={this.images[this.user_img[1] + ".png"].default} className="img_user"></img>
                 <p className="txt_st">{record.player.p2}</p>
                 <hr className="hr_user" />
-                {this.play_note(record, this.state.playIndex, record.player.p1)}
+                {this.play_note(record, this.state.playIndex, record.player.p2)}
                 <p className="txt_st">{"Score: " + record.play[this.state.playIndex].score.p2}</p>
                 <p className="txt_st">{"Time: " + record.play[this.state.playIndex].time_limit.p2}</p>
             </div>
@@ -393,6 +397,15 @@ class Board extends Component {
               <img src={this.images["t" + record.trump[0].toString() + ".png"].default} className="img_trump1"></img>
               <img src={this.images["t" + btn_trump[2][record.trump[1]].toString() + ".png"].default} className="img_trump"></img>
             </div>
+			<div className={"zindex_22 top_135 left_1390"}>
+              <img src={this.images["p" + (record.play[this.state.playIndex].go_first == p1 ? "1" : "2") + ".png"].default}></img>
+            </div>
+            <div className={"zindex_22 top_490 left_1390"}>
+              <img src={this.images["p" + (record.play[this.state.playIndex].go_first == p2 ? "1" : "2") + ".png"].default}></img>
+            </div>
+            <div className={"zindex_22 top_" + (record.play[this.state.playIndex].score.p1 > record.play[this.state.playIndex].score.p2 ? 5 : 360).toString() + " left_1395"}>
+              <img src={this.images[(this.state.playIndex == record.play.length - 1 && record.play[this.state.playIndex].score.p1 != record.play[this.state.playIndex].score.p2 ? "pw" : "PZ") + ".png"].default}></img>
+            </div>  
           </>
         }
       </div>

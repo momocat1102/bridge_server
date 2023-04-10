@@ -5,10 +5,9 @@ import Modal from "../ModalComponents/Modal";
 import Board from "./Board";
 import { Flipper, Flipped } from "react-flip-toolkit";
 import ScoreboardItem from "./Tournament/ScoreboardItem";
-import { restart_game, assign_winner, download_history } from "../api";
+import { assign_winner, download_history } from "../api";
 import WinnerChooserBody from "../ModalComponents/WinnerChooserBody";
 import HistoryButtonFooter from "../ModalComponents/HistoryButtonFooter";
-import TurnList from "./TurnList";
 
 class PlayList extends Component {
   constructor(props) {
@@ -51,16 +50,7 @@ class PlayList extends Component {
   }
   
   async contextMenuHandler(e, data, target) {
-    if (data.action === "restart") {
-      try {
-        await restart_game(
-          this.props.competition_id,
-          target.getAttribute("game_id")
-        );
-      } catch (e) {
-        alert("重啟失敗");
-      }
-    } else if (data.action === "assign-winner") {
+    if (data.action === "assign-winner") {
       this.open_modal_winner_chooser(
         target.getAttribute("game_id"),
         target.getAttribute("player_a"),
@@ -71,7 +61,7 @@ class PlayList extends Component {
 
   doAssignWinner = async (game_id, winner) => {
     try {
-      await assign_winner(this.context.competition_id, game_id, winner);
+      await assign_winner(this.props.competition_id, game_id, winner);
       this.setState({ open_modal_winner_chooser: false });
     } catch (e) {
       console.log(e);
@@ -107,24 +97,34 @@ class PlayList extends Component {
     return totalScore;
   }
 
-  // handleDownloadError() {
-  //   this.setState({ download: "下載資料錯誤 稍後在試" });
-  // }
+  win_game = (game_id) => {
+    let win_game = this.props.record[game_id].winner;
+    console.log(this.state);
+    if (win_game === this.state.showBoards[0]) {
+      return <apan style={{ color: "blue"}}>"已結束"</apan>;
+    }
+    else if (win_game === this.state.showBoards[1]) {
+      return <apan style={{ color: "red"}}>"已結束"</apan>;
+    }
+    else {
+      return <apan style={{ color: "green"}}>"未結束"</apan>;
+    }
+  }
 
   one2oneScoreboard(p, ps, index) {
     let p1 = p;
-    let p2 = ps[(p == ps[0] ? 1 : 0)];
+    let p2 = ps[(p === ps[0] ? 1 : 0)];
     let p1_score = 0;
     let p2_score = 0;
     let game_1 = this.props.one2onescore[p1 + "_" + p2 + "_" + index];
     let game_2 = this.props.one2onescore[p2 + "_" + p1 + "_" + index];
     if(game_1 !== undefined){
-      console.log(game_1, game_1[p1], game_1[p2]);
+      // console.log(game_1, game_1[p1], game_1[p2]);
       p1_score += game_1[p1];
       p2_score += game_1[p2];
     }
     if(game_2 !== undefined){
-      console.log(game_2, game_2[p1], game_2[p2]);
+      // console.log(game_2, game_2[p1], game_2[p2]);
       p1_score += game_2[p1];
       p2_score += game_2[p2];
     }
@@ -139,7 +139,7 @@ class PlayList extends Component {
     let player_i = "";
     let player_j = "";
     let score = 0;
-    if (this.state.showBoards.length != 0) {
+    if (this.state.showBoards.length !== 0) {
       return <>
         <table className="table_bear margintop_50">
           <tbody>
@@ -152,7 +152,7 @@ class PlayList extends Component {
                     className="table_bear_hr width_30" 
                     style={{ backgroundColor: "rgb(0,139,139)" }}
                   >
-                    {player}
+                    {index === 0 ? <apan style={{ color: "blue"}}>{player}</apan> : <apan style={{ color: "red"}}>{player}</apan>}
                   </td>
                   <td className="table_bear_hr width_15" style={{ backgroundColor: "rgb(0,139,139)" }}>Score</td>
                 </>
@@ -170,7 +170,7 @@ class PlayList extends Component {
                   </td>
                   {this.state.showBoards.map((player, index) => (
                     player_i = player,
-                    player_j = this.state.showBoards[(player == this.state.showBoards[0] ? 1 : 0)],
+                    player_j = this.state.showBoards[(player === this.state.showBoards[0] ? 1 : 0)],
                     score = this.one2oneScoreboard(player_i, this.state.showBoards, id + 1),
                     <>
                       <ContextMenuTrigger
@@ -191,10 +191,10 @@ class PlayList extends Component {
                           onClick: (e) =>
                             this.props.board_end[player_i + "_" + player_j + "_" + (id + 1)] !==
                             undefined
-                              ? this.open_modal((index == 0 ? player_i : player_j), (index == 0 ? player_j : player_i), (id + 1))
+                              ? this.open_modal((index === 0 ? player_j : player_i), (index === 0 ? player_i : player_j), (id + 1))
                               : null,
                           style: { cursor: "pointer", borderStyle: "none", width: "30%" },
-                          game_id: `${player_i}_${player_j}`,
+                          game_id: `${player_i}_${player_j}_${id + 1}`,
                           player_a: player_i,
                           player_b: player_j,
                         }}
@@ -204,9 +204,9 @@ class PlayList extends Component {
                           ? "未開始"
                           : this.props.board_end[player_i + "_" + player_j + "_" + (id + 1)] ===
                               true || this.props.status === "end"
-                          ? "已結束"
+                          ? this.win_game(`${player_i}_${player_j}_${id + 1}`) //`${player_i}_${player_j}_${id + 1}`
                           : "(進行中)"}
-                          {this.props.board_end[player_i + "_" + player_j + "_" + (id + 1)]}
+                          {/* {this.props.board_end[player_i + "_" + player_j + "_" + (id + 1)]} */}
                       </ContextMenuTrigger>
                       <td key={"s_" + id + "_" + index} className="table_bear_tr1 width_15">
                         {score}
@@ -268,36 +268,15 @@ class PlayList extends Component {
               ></Board>
             }
             model_footer={
-              this.props.status === "end" ? (
-                <HistoryButtonFooter
-                  history_time={this.props.history_time}
-                  game_id={this.modal_player_a + "_" + this.modal_player_b + "_" + this.state.numBoard}
-                  loadHistory={this.props.loadHistory}
-                ></HistoryButtonFooter>
-              ) : (
-                <div></div>
-              )
+              <div></div>              
             }
             width={"100%"}
             margin_top={"-53px"}
             close={this.open_modal}
-            download={this.props.status === "end" ? true : false}
-            download_cb={(e) =>
-              this.downloadHistory(
-                this.props.competition_id,
-                this.modal_player_a + "_" + this.modal_player_b + "_" + this.state.numBoard,
-                `B-${this.modal_player_a}VSW-${this.modal_player_b}`
-              )
-            }
+            
           ></Modal>
         )}
         <ContextMenu id="contextmenu">
-          <MenuItem
-            onClick={this.contextMenuHandler}
-            data={{ action: "restart" }}
-          >
-            重新開始
-          </MenuItem>
           <MenuItem
             onClick={this.contextMenuHandler}
             data={{ action: "assign-winner" }}
@@ -326,7 +305,6 @@ class PlayList extends Component {
     }
     else {
       return <>
-        {/* {console.log(this.props.one2onescore)} */}
           <Flipper flipKey={this.props.scoreboard.join("")}>
             <ul className="scoreboard">
               {this.props.scoreboard.map(([order, player, score]) => (
@@ -397,25 +375,6 @@ class PlayList extends Component {
               ))}
             </tbody>
           </table>
-          {this.state.open_modal && (
-            <Modal
-              title={""}
-              model_content={
-                <TurnList
-                  p1={this.modal_player_a}
-                  p2={this.modal_player_b}
-                  num={this.props.num}
-                  updateState={this.props.updateState}
-                ></TurnList>
-              }
-              model_footer={
-                  <div></div>
-              }
-              width={"52%"}
-              margin_top={"1%"}
-              close={this.open_modal}
-            ></Modal>
-          )}
           {
             this.props.status === "ended"?
             <span onClick={this.downloadHistory}>

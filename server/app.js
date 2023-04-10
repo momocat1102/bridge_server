@@ -351,12 +351,17 @@ app.post("/restart_game", function(req, res) {
 });
 
 app.post("/assign_winner", function(req, res) {
+    console.log(req.fields.game_id);
     if (req.fields.competition_name.includes("test")) {
+        // console.log("test assign winner_1");
+        // console.log(competitions[req.fields.competition_name]);
+        // console.log(competitions[req.fields.competition_name].games[req.fields.game_id]);
         if (
             competitions[req.fields.competition_name] !== undefined &&
             competitions[req.fields.competition_name].games[req.fields.game_id] !== undefined &&
             !competitions[req.fields.competition_name].games[req.fields.game_id].is_end
         ) {
+            // console.log("test assign winner_2");
             if (
                 competitions[req.fields.competition_name].games[req.fields.game_id].p1.name !== req.fields.winner &&
                 competitions[req.fields.competition_name].games[req.fields.game_id].p2.name !== req.fields.winner
@@ -369,14 +374,16 @@ app.post("/assign_winner", function(req, res) {
                 ].assign_winner = req.fields.winner;
                 competitions[req.fields.competition_name].games[
                     req.fields.game_id
-                ].cancel_request(game.CANCEL_ASSIGN_WINNER);
+                ].cancel_request("assign winner");
                 res.end();
             }
         } else {
+            // console.log("test assign winner_3");
             res.statusCode = 400;
             res.end("game ended");
         }
     } else {
+        // console.log("test assign winner_3");
         if (req.fields.Authorization !== undefined) {
             let token = req.fields.Authorization.replace("Bearer ", "");
             try {
@@ -398,7 +405,7 @@ app.post("/assign_winner", function(req, res) {
                         ].assign_winner = req.fields.winner;
                         competitions[req.fields.competition_name].games[
                             req.fields.game_id
-                        ].cancel_request(game.CANCEL_ASSIGN_WINNER);
+                        ].cancel_request("assign winner");
                         res.end();
                     }
                 } else {

@@ -42,4 +42,5 @@
 		time_limit{p1, p2}
 
 	}
+	winner // 誰贏
 }
