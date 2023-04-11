@@ -1001,7 +1001,7 @@ td {
     background-color:#F4F4F4;
 }
 @media screen and (min-width: 1480px) { 
-    .board_bear { zoom: 80%; } 
+    .board_bear { zoom: 100%; } 
 } 
 @media screen and (max-width: 1500px) { 
     .board_bear { zoom: 80%; } 
@@ -1061,7 +1061,19 @@ td {
 }
 .img_user {
     filter: saturate(1);
-    margin:0 0 -30px 0;
+    margin:-5px 0 -30px 0;
+}
+.icon_user {
+    border-radius: 99px;
+    background-color: white;
+    display: inline-block;
+    vertical-align: middle;
+}
+.back_user {
+    border-radius: 99px;
+    width: 100px;
+    height: 100px;
+    position:absolute;
 }
 .hr_user {
     margin: -10px 0;
@@ -1099,7 +1111,7 @@ td {
     color: #CCE8E8; 
     font-weight: 900;
     float:right;
-    margin: 5px 20px 5px 0;
+    margin: 5px 20px 5px 0; 
 }
 .btn_pageR:hover {
     filter: brightness(.7);
@@ -1124,16 +1136,16 @@ td {
 }
 
 .zindex_10 { z-index: 10; position:absolute; }
-.zindex_11 { z-index: 11; position:absolute }
-.zindex_12 { z-index: 12; position:absolute }
-.zindex_13 { z-index: 13; position:absolute }
-.zindex_14 { z-index: 14; position:absolute }
-.zindex_15 { z-index: 15; position:absolute }
-.zindex_16 { z-index: 16; position:absolute }
-.zindex_17 { z-index: 17; position:absolute }
-.zindex_18 { z-index: 18; position:absolute }
-.zindex_19 { z-index: 19; position:absolute }
-.zindex_20 { z-index: 20; position:absolute }
+.zindex_11 { z-index: 11; position:absolute; }
+.zindex_12 { z-index: 12; position:absolute; }
+.zindex_13 { z-index: 13; position:absolute; }
+.zindex_14 { z-index: 14; position:absolute; }
+.zindex_15 { z-index: 15; position:absolute; }
+.zindex_16 { z-index: 16; position:absolute; }
+.zindex_17 { z-index: 17; position:absolute; }
+.zindex_18 { z-index: 18; position:absolute; }
+.zindex_19 { z-index: 19; position:absolute; }
+.zindex_20 { z-index: 20; position:absolute; }
 .zindex_21 { z-index: 21; position:absolute; }
 .zindex_22 { z-index: 22; position:absolute; }
 
@@ -1177,8 +1189,15 @@ td {
 .width_30 { width: 30%; }
 .width_75 { width: 75%; }
 .width_100 { width: 100%; }
+.width90 { width: 90px; }
 
 .margintop_50 { margin-top: 50px; }
+
+.color_b { color: black; }
+.color_r { color: red; }
+.color_y { color: rgb(180, 180, 0); }
+.color_u { color: blue; }
+.color_g { color: green; }
 
 .move_co {
     animation: move_co 1s forwards;
@@ -1293,7 +1312,7 @@ td {
     box-shadow:4px 4px 1px darkgray;
 }
 .div_height {
-    height:295px; 
+    height:370px; 
     overflow:auto;
     vertical-align: top;
 }

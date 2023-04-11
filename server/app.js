@@ -351,7 +351,7 @@ app.post("/restart_game", function(req, res) {
 });
 
 app.post("/assign_winner", function(req, res) {
-    console.log(req.fields.game_id);
+    console.log(req.fields.game_id, req.fields.winner);
     if (req.fields.competition_name.includes("test")) {
         // console.log("test assign winner_1");
         // console.log(competitions[req.fields.competition_name]);

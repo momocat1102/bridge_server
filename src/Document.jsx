@@ -15,6 +15,7 @@ import rule3 from "./DocumentComponents/documents/rule3.jpg";
 import rule4 from "./DocumentComponents/documents/rule4.jpg";
 import rule5 from "./DocumentComponents/documents/rule5.jpg";
 import rule6 from "./DocumentComponents/documents/rule6.jpg";
+import back from "./DocumentComponents/documents/back.jpg";
 import protocol from "./DocumentComponents/documents/protocol.md";
 import clientCredential from "./client_secret.json";
 import download_Python from "./DocumentComponents/documents/download_sample_bot.md";
@@ -43,6 +44,7 @@ class Document extends Component {
         rule4: rule4,
         rule5: rule5,
         rule6: rule6,
+        back: back,
       },
       a: {
         client_secret: {
@@ -82,7 +84,7 @@ class Document extends Component {
               ["Java", "下載Java"],
             ]}
           ></Menu>
-          <Item text={"問題回報"} link={"/document/問題回報"}></Item>
+          <Item text={"關於我們"} link={"/document/關於我們"}></Item>
         </div>
         <div className="content">
           <Switch>
@@ -143,8 +145,12 @@ class Document extends Component {
             <Route path="/document/下載Java">
               <ReactMarkdown>{this.state.download_Java}</ReactMarkdown>
             </Route>
-            <Route path="/document/問題回報">
-              <ReactMarkdown>{this.state.feedback}</ReactMarkdown>
+            <Route path="/document/關於我們">
+              <ReactMarkdown
+                components={{
+                  img: (props) => <img src={this.state.img[props.src]} alt="" />,
+                }}
+              >{this.state.feedback}</ReactMarkdown>
             </Route>
           </Switch>
         </div>

@@ -327,6 +327,7 @@ const restart_game = async (competition_id, game_id) => {
 };
 
 const assign_winner = async (competition_id, game_id, winner) => {
+  // console.log(competition_id, game_id, winner);
   return new Promise((resolve, reject) => {
     let formData = new FormData();
     formData.append("competition_name", competition_id);

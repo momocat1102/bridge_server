@@ -325,6 +325,7 @@ class Competition {
                         // this.games[player_name_i + "_" + player_name_j].BO1();
                         console.log("第一小場", game_id_1);
                         winner = await this.games[game_id_1].play()
+                        console.log("winner is " + winner);
                         // console.log("winner is " + winner, player_name_i, player_name_j);
                         if (winner === player_name_i) {
                             this.one2onescore[game_id_1][player_name_i] += 1;
@@ -353,6 +354,7 @@ class Competition {
                         this.games[game_id_2].loadcard(cardlist);
                         console.log("第二小場", game_id_2);
                         winner = await this.games[game_id_2].play(0)
+                        console.log("winner is " + winner);
                         if (winner === player_name_i) {
                             this.one2onescore[game_id_2][player_name_i] += 1;
                         } else {

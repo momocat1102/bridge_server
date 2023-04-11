@@ -1044,11 +1044,11 @@ class game{
             
         } catch (e) {
             if(e.message === 'assign winner'){
-                result = this.early_win === this.p1.name ? this.P2 : this.P1;
+                result = this.assign_winner === this.p1.name ? this.P1 : this.P2;
                 this.hist += "(指定贏家)\n";
                 this.record.player.p1 = this.p1.name + "(指定贏家)";
                 this.record.player.p2 = this.p2.name + "(指定贏家)";
-                console.log("ASSIGN_WINNER");
+                console.log("ASSIGN_WINNER", this.assign_winner);
             }
             else{
                 result = this.early_win === this.P1 ? this.P2 : this.P1;

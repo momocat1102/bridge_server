@@ -6,10 +6,8 @@ exe_path = "./HoneymoonBridgeTest.exe"
 process = None
 
 class CompetitionSocket(websocket.WebSocketApp):
-    server_url = 'ws://127.0.0.1:8082'
-    # server_url='ws://163.22.21.143:8082'
-    # server_url='ws://10.21.23.46:8080'
-    # server_url='ws://10.21.23.172:8080'
+    # server_url = 'ws://127.0.0.1:6671'
+    server_url='ws://163.22.22.143:6671'
     
     def __init__(self, competition_id, player_id):
         self.competition_id=competition_id
@@ -46,23 +44,21 @@ class CompetitionSocket(websocket.WebSocketApp):
             pass
         self.ws=None
         print("### closed ###")
-        # time.sleep(5)
-        # print('REOPEN')
-        # self.run_forever()
     
     
     def on_message(self, ws, message):
         global process
-        # print(message)
+        print(message)
         data=json.loads(message)
-        if data['id'] == 0: # READY
+        print(type(data))
+        if 'id' in data and data['id'] == 0: # READY
             global process
             res={
                 'id': data['id'],
                 'name': self.player_id
             }
             ws.send(json.dumps(res))
-        elif data['id'] == 1: # RESET
+        elif 'id' in data and data['id'] == 1: # RESET
             if process != None:
                 process.stdin.close()
                 process.wait()
@@ -76,7 +72,7 @@ class CompetitionSocket(websocket.WebSocketApp):
                 'reset': 'success'
             }
             ws.send(json.dumps(res))
-        elif data['id'] == 2: # DEAL
+        elif 'id' in data and data['id'] == 2: # DEAL
             # 拿手牌
             hand_card = [str(i) for i in data['data']['hand_card']]
             hand_card = ' '.join(hand_card)
@@ -88,7 +84,7 @@ class CompetitionSocket(websocket.WebSocketApp):
                 'name': self.player_id
             }
             ws.send(json.dumps(res))
-        elif data['id'] == 3: # CALL
+        elif 'id' in data and data['id'] == 3: # CALL
             process.stdin.write(b"3 call " + str(data['data']['call']).encode() + b"\n")
             process.stdin.flush()
             output = process.stdout.readline().decode().strip()
@@ -99,7 +95,7 @@ class CompetitionSocket(websocket.WebSocketApp):
                 'player_call': my_call
             }
             ws.send(json.dumps(res))
-        elif data['id'] == 4: # CALL_RESULT
+        elif 'id' in data and data['id'] == 4: # CALL_RESULT
             process.stdin.write(b"4 call_result " + str(data['data']['result']).encode() + b"\n")
             process.stdin.flush()
             output = process.stdout.readline().decode().strip()
@@ -108,7 +104,7 @@ class CompetitionSocket(websocket.WebSocketApp):
                 'name': self.player_id
             }
             ws.send(json.dumps(res))
-        elif data['id'] == 5: # CHANGE_FIRST
+        elif 'id' in data and data['id'] == 5: # CHANGE_FIRST
             process.stdin.write(b"5 change_first " + str(data['data']['change_card']).encode() + b"\n")
             process.stdin.flush()
             output = process.stdout.readline().decode().strip()
@@ -119,7 +115,7 @@ class CompetitionSocket(websocket.WebSocketApp):
                 'player_card_for_change': my_change
             }
             ws.send(json.dumps(res))
-        elif data['id'] == 6: # CHANGE_SECOND
+        elif 'id' in data and data['id'] == 6: # CHANGE_SECOND
             process.stdin.write(b"6 change_second " + str(data['data']['change_card']).encode() + b" " + str(data['data']['opp_card']).encode() + b"\n")
             process.stdin.flush()
             output = process.stdout.readline().decode().strip()
@@ -130,14 +126,14 @@ class CompetitionSocket(websocket.WebSocketApp):
                 'player_card_for_change': my_change
             }
             ws.send(json.dumps(res))
-        elif data['id'] == 7: # CHANGE_RESULT
+        elif 'id' in data and data['id'] == 7: # CHANGE_RESULT
             process.stdin.write(f"7 change_result {data['data']['opp_card']} {data['data']['player_get']}\n".encode())
             res={
                 'id': data['id'],
                 'name': self.player_id
             }
             ws.send(json.dumps(res))
-        elif data['id'] == 8: # PLAY_CARD_FIRST
+        elif 'id' in data and data['id'] == 8: # PLAY_CARD_FIRST
             process.stdin.write(b"8 play_card_first\n")
             process.stdin.flush()
             output = process.stdout.readline().decode().strip()
@@ -148,7 +144,7 @@ class CompetitionSocket(websocket.WebSocketApp):
                 'player_play': my_play
             }
             ws.send(json.dumps(res))
-        elif data['id'] == 9: # PLAY_CARD_SECOND
+        elif 'id' in data and data['id'] == 9: # PLAY_CARD_SECOND
             process.stdin.write(b"9 play_card_second " + str(data['data']['opp_play']).encode() + b"\n")
             process.stdin.flush()
             output = process.stdout.readline().decode().strip()
@@ -159,14 +155,14 @@ class CompetitionSocket(websocket.WebSocketApp):
                 'player_play': my_play
             }
             ws.send(json.dumps(res))
-        elif data['id'] == 10: # PLAY_CARD_RESULT
+        elif 'id' in data and data['id'] == 10: # PLAY_CARD_RESULT
             process.stdin.write(f"10 play_card_result {data['data']['opp_card']} {data['data']['result']}\n".encode())
             res={
                 'id': data['id'],
                 'name': self.player_id
             }
             ws.send(json.dumps(res))
-        elif data['id'] == 11: # GAME_OVER
+        elif 'id' in data and data['id'] == 11: # GAME_OVER
             process.stdin.write(b"11 game_over 1\n")
             process.stdin.flush()
             output = process.stdout.readline().decode().strip()
@@ -177,21 +173,21 @@ class CompetitionSocket(websocket.WebSocketApp):
                 'name': self.player_id
             }
             ws.send(json.dumps(res))
-        elif data['id'] == 12: # CHANGE_FINAL
+        elif 'id' in data and data['id'] == 12: # CHANGE_FINAL
             res={
                 'id': data['id'],
                 'name': self.player_id,
                 'connect': 'success'
             }
             ws.send(json.dumps(res))
-        elif data['id'] == 13: # TEST
+        elif 'id' in data and data['id'] == 13: # TEST
             res={
                 'id': data['id'],
                 'player_name': self.player_id,
                 'connect': 'success'
             }
             ws.send(json.dumps(res))
-        elif data['id'] == 14: # PHASE_AND_PLAYER_STATUS
+        elif 'id' in data and data['id'] == 14: # PHASE_AND_PLAYER_STATUS
             # 傳送目前階段及先後手
             process.stdin.write(b"1 state " + data['state'].encode() + b" " + data['turn'].encode() + b"\n")
             process.stdin.flush()
@@ -210,4 +206,4 @@ class CompetitionSocket(websocket.WebSocketApp):
 
 
 
-aaa = CompetitionSocket('test', 'test2')
+aaa = CompetitionSocket('test', 'name2')
