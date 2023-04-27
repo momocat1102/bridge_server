@@ -224,31 +224,31 @@ class Board extends Component {
           <>  
             {record.hand_card.p1_call_handcards.map((card, id) => (
               <button className={"btn_card zindex_" + (22 - id).toString() + " top_25 left_c" + id.toString()}>
-                <img src={this.images[card + ".png"].default} className="img_card" alt="card"></img>
+                <img src={this.images[card + ".png"]} className="img_card" alt="card"></img>
               </button>
             ))}
             {record.hand_card.p2_call_handcards.map((card1, id1) => (
               <button className={"btn_card zindex_" + (10 + id1).toString() + " top_525 left_c" + id1.toString()}>
-                <img src={this.images[card1 + ".png"].default} className="img_card" alt="card"></img>
+                <img src={this.images[card1 + ".png"]} className="img_card" alt="card"></img>
               </button>
             ))}
             <button className="btn_card zindex_22 top_275 left_c0">
-              <img src={this.images["PB.png"].default} className="img_card" alt="card"></img>
+              <img src={this.images["PB.png"]} className="img_card" alt="card"></img>
             </button>
             <div className="zindex_10 top_240 left_c3 div_call">
               {btn_trump[0].map(nums => (
                 <button className={"btn_call zindex_11 top_50 left_c" + nums.toString() + this.call_light(record.call[this.state.callIndex].call_val, nums - 1, 0)}>
-                  <img src={this.images["c" + nums.toString() + ".png"].default} className="img_call" alt="card"></img>
+                  <img src={this.images["c" + nums.toString() + ".png"]} className="img_call" alt="card"></img>
                 </button>
               ))}
               {btn_trump[1].map((num1, idx) => (
                 <button className={"btn_call zindex_11 top_140 left_c" + (idx + 1).toString() + this.call_light(record.call[this.state.callIndex].call_val, idx, 1)}>
-                  <img src={this.images["c" + num1.toString() + ".png"].default} className="img_call" alt="card"></img>
+                  <img src={this.images["c" + num1.toString() + ".png"]} className="img_call" alt="card"></img>
                 </button>
               ))}
             </div>
             <div className="zindex_10 top_25 left_1270 div_user">
-              <img src={this.images["x" + width[record.player.p1].split('_')[0] + ".png"].default} className="img_user" alt="card"></img>
+              <img src={this.images["x" + width[record.player.p1].split('_')[0] + ".png"]} className="img_user" alt="card"></img>
               <p className="txt_st">{record.player.p1}</p>
               <hr className="hr_user" style={{border: "2px solid #" + width[record.player.p1].split('_')[1]}} />
               <p className="txt_st">{this.call_note(record, this.state.callIndex, record.player.p1)}</p>
@@ -256,7 +256,7 @@ class Board extends Component {
               <p className="txt_st">{"Time: " + record.call[this.state.callIndex].time_limit.p1}</p>
             </div>
             <div className="zindex_10 top_380 left_1270 div_user">
-              <img src={this.images["x" + width[record.player.p2].split('_')[0] + ".png"].default} className="img_user" alt="card"></img>
+              <img src={this.images["x" + width[record.player.p2].split('_')[0] + ".png"]} className="img_user" alt="card"></img>
               <p className="txt_st">{record.player.p2}</p>
               <hr className="hr_user" style={{border: "2px solid #" + width[record.player.p2].split('_')[1]}} />
               <p className="txt_st">{this.call_note(record, this.state.callIndex, record.player.p2)}</p>
@@ -275,43 +275,43 @@ class Board extends Component {
           <>
             {this.change_card(record.change[this.state.changeIndex], 0, p1, p2)[0].map((card, id) => (
               <button className={this.class_txt(1, this.change_card(record.change[this.state.changeIndex], 0, p1, p2)[1], record.change[this.state.changeIndex].first_change_card, card, id)}>
-                <img src={this.images[card + ".png"].default} className="img_card" alt="card"></img>
+                <img src={this.images[card + ".png"]} className="img_card" alt="card"></img>
               </button>
             ))}
             {this.change_card(record.change[this.state.changeIndex], 1, p1, p2)[0].map((card1, id1) => (
               <button className={this.class_txt(2, this.change_card(record.change[this.state.changeIndex], 1, p1, p2)[1], record.change[this.state.changeIndex].first_change_card, card1, id1)}>
-                <img src={this.images[card1 + ".png"].default} className="img_card" alt="card"></img>
+                <img src={this.images[card1 + ".png"]} className="img_card" alt="card"></img>
               </button>
             ))}
             <button className="btn_card zindex_22 top_275 left_c0">
-              <img src={this.images[(this.state.changeIndex === record.change.length - 1 ? "PZ" : "PB") + ".png"].default} className="img_card" alt="card"></img>
+              <img src={this.images[(this.state.changeIndex === record.change.length - 1 ? "PZ" : "PB") + ".png"]} className="img_card" alt="card"></img>
             </button>
             <button className="btn_card zindex_22 top_275 left_c2 move_nt">
-              <img src={this.images[(this.state.changeIndex === record.change.length - 1 ? "PZ" : record.change[this.state.changeIndex].first_change_card) + ".png"].default} className="img_card" alt="card"></img>
+              <img src={this.images[(this.state.changeIndex === record.change.length - 1 ? "PZ" : record.change[this.state.changeIndex].first_change_card) + ".png"]} className="img_card" alt="card"></img>
             </button>
             <div className="zindex_10 top_25 left_1270 div_user">
-                <img src={this.images["x" + width[record.player.p1].split('_')[0] + ".png"].default} className="img_user" alt="card"></img>
+                <img src={this.images["x" + width[record.player.p1].split('_')[0] + ".png"]} className="img_user" alt="card"></img>
                 <p className="txt_st">{record.player.p1}</p>
                 <hr className="hr_user" style={{border: "2px solid #" + width[record.player.p1].split('_')[1]}} />
                 <p className="txt_st1">{this.change_note(record, this.state.changeIndex, record.player.p1)}</p>
                 <p className="txt_st">{"Time: " + record.change[this.state.changeIndex].time_limit.p1}</p>
             </div>
             <div className="zindex_10 top_380 left_1270 div_user">
-                <img src={this.images["x" + width[record.player.p2].split('_')[0] + ".png"].default} className="img_user" alt="card"></img>
+                <img src={this.images["x" + width[record.player.p2].split('_')[0] + ".png"]} className="img_user" alt="card"></img>
                 <p className="txt_st">{record.player.p2}</p>
                 <hr className="hr_user" style={{border: "2px solid #" + width[record.player.p2].split('_')[1]}} />
                 <p className="txt_st1">{this.change_note(record, this.state.changeIndex, record.player.p2)}</p>
                 <p className="txt_st">{"Time: " + record.change[this.state.changeIndex].time_limit.p2}</p>
             </div>
             <div className={"zindex_22 div_trump top_" + (record.dealer === p1 ? 10 : 365).toString() + " left_1260"}>
-              <img src={this.images["t" + record.trump[0].toString() + ".png"].default} className="img_trump1" alt="card"></img>
-              <img src={this.images["t" + btn_trump[2][record.trump[1]].toString() + ".png"].default} className="img_trump" alt="card"></img>
+              <img src={this.images["t" + record.trump[0].toString() + ".png"]} className="img_trump1" alt="card"></img>
+              <img src={this.images["t" + btn_trump[2][record.trump[1]].toString() + ".png"]} className="img_trump" alt="card"></img>
             </div>
             <div className={"zindex_22 top_135 left_1390"}>
-              <img src={this.images["p" + (record.change[this.state.changeIndex].go_first === p1 ? "1" : "2") + ".png"].default} alt="card"></img>
+              <img src={this.images["p" + (record.change[this.state.changeIndex].go_first === p1 ? "1" : "2") + ".png"]} alt="card"></img>
             </div>
             <div className={"zindex_22 top_490 left_1390"}>
-              <img src={this.images["p" + (record.change[this.state.changeIndex].go_first === p2 ? "1" : "2") + ".png"].default} alt="card"></img>
+              <img src={this.images["p" + (record.change[this.state.changeIndex].go_first === p2 ? "1" : "2") + ".png"]} alt="card"></img>
             </div>
           </>
         }
@@ -325,19 +325,19 @@ class Board extends Component {
           <>
             {this.play_card(record, this.state.playIndex, 0, p1, p2)[0].map((card, id) => (
               <button className={this.class_txt(3, this.play_card(record, this.state.playIndex, 0, p1, p2), this.state.playIndex, card, id)}>
-                <img src={this.images[card + ".png"].default} className="img_card" alt="card"></img>
+                <img src={this.images[card + ".png"]} className="img_card" alt="card"></img>
               </button>
             ))}
             {this.play_card(record, this.state.playIndex, 1, p1, p2)[0].map((card1, id1) => (
               <button className={this.class_txt(4, this.play_card(record, this.state.playIndex, 1, p1, p2), this.state.playIndex, card1, id1)}>
-                <img src={this.images[card1 + ".png"].default} className="img_card" alt="card"></img>
+                <img src={this.images[card1 + ".png"]} className="img_card" alt="card"></img>
               </button>
             ))}
             <button className="btn_card zindex_22 top_275 left_c0">
-              <img src={this.images[(this.state.playIndex === 0 ? "PZ" : "PB") + ".png"].default} className="img_card" alt="card"></img>
+              <img src={this.images[(this.state.playIndex === 0 ? "PZ" : "PB") + ".png"]} className="img_card" alt="card"></img>
             </button>
             <div className="zindex_10 top_25 left_1270 div_user">
-                <img src={this.images["x" + width[record.player.p1].split('_')[0] + ".png"].default} className="img_user" alt="card"></img>
+                <img src={this.images["x" + width[record.player.p1].split('_')[0] + ".png"]} className="img_user" alt="card"></img>
                 <p className="txt_st">{record.player.p1}</p>
                 <hr className="hr_user" style={{border: "2px solid #" + width[record.player.p1].split('_')[1]}} />
                 <p className="txt_st1">{this.play_note(record, this.state.playIndex, record.player.p1)}</p>
@@ -345,7 +345,7 @@ class Board extends Component {
                 <p className="txt_st">{"Time: " + record.play[this.state.playIndex].time_limit.p1}</p>
             </div>
             <div className="zindex_10 top_380 left_1270 div_user">
-                <img src={this.images["x" + width[record.player.p2].split('_')[0] + ".png"].default} className="img_user" alt="card"></img>
+                <img src={this.images["x" + width[record.player.p2].split('_')[0] + ".png"]} className="img_user" alt="card"></img>
                 <p className="txt_st">{record.player.p2}</p>
                 <hr className="hr_user" style={{border: "2px solid #" + width[record.player.p2].split('_')[1]}} />
                 <p className="txt_st1">{this.play_note(record, this.state.playIndex, record.player.p2)}</p>
@@ -353,17 +353,17 @@ class Board extends Component {
                 <p className="txt_st">{"Time: " + record.play[this.state.playIndex].time_limit.p2}</p>
             </div>
             <div className={"zindex_22 div_trump top_" + (record.dealer === p1 ? 10 : 365).toString() + " left_1260"}>
-              <img src={this.images["t" + record.trump[0].toString() + ".png"].default} className="img_trump1" alt="card"></img>
-              <img src={this.images["t" + btn_trump[2][record.trump[1]].toString() + ".png"].default} className="img_trump" alt="card"></img>
+              <img src={this.images["t" + record.trump[0].toString() + ".png"]} className="img_trump1" alt="card"></img>
+              <img src={this.images["t" + btn_trump[2][record.trump[1]].toString() + ".png"]} className="img_trump" alt="card"></img>
             </div>
             <div className={"zindex_22 top_135 left_1390"}>
-              <img src={this.images["p" + (record.play[this.state.playIndex].go_first === p1 ? "1" : "2") + ".png"].default} alt="card"></img>
+              <img src={this.images["p" + (record.play[this.state.playIndex].go_first === p1 ? "1" : "2") + ".png"]} alt="card"></img>
             </div>
             <div className={"zindex_22 top_490 left_1390"}>
-              <img src={this.images["p" + (record.play[this.state.playIndex].go_first === p2 ? "1" : "2") + ".png"].default} alt="card"></img>
+              <img src={this.images["p" + (record.play[this.state.playIndex].go_first === p2 ? "1" : "2") + ".png"]} alt="card"></img>
             </div>
-            <div className={"zindex_22 top_" + (record.play[this.state.playIndex].score.p1 > record.play[this.state.playIndex].score.p2 ? 5 : 360).toString() + " left_1395"}>
-              <img src={this.images[(this.state.playIndex === record.play.length - 1 && record.play[this.state.playIndex].score.p1 !== record.play[this.state.playIndex].score.p2 ? "pw" : "PZ") + ".png"].default} alt="card"></img>
+            <div className={"zindex_22 top_" + (record.winner === p1 ? 5 : 360).toString() + " left_1395"}>
+              <img src={this.images["pw.png"]} alt="card"></img>
             </div>
           </>
         }

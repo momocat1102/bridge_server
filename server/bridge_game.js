@@ -152,8 +152,8 @@ class game{
 
     loadcard = (cardlist) => {
         this.save_pilecards = cardlist[0];
-        this.save_p1_cards = cardlist[2];
-        this.save_p2_cards = cardlist[1];
+        this.save_p1_cards = cardlist[1];
+        this.save_p2_cards = cardlist[2];
     }
 
     sortcard = (arr) => {
@@ -249,7 +249,7 @@ class game{
                 console.log("斷線");
                 timer.hold(request_reject); // 重連失敗
                 request_reject("斷線");
-            }, 1000 * 2);
+            }, 1000 * 60);
             // console.log("重連0000000");
             if (player === this.p1) {
                 this.early_win = this.P2;
@@ -294,7 +294,7 @@ class game{
             try {
                 // socket.removeEventListener("message", handler);
                 let get_data = JSON.parse(message.data);
-                // console.log(get_data)
+                console.log(get_data)
                 switch(get_data.id){
                     case 0 : // ready
                         break;

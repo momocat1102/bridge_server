@@ -5,6 +5,8 @@ import SideWidget from "./IntroductionComponents/SideWidget";
 import TableWidgetContent from "./IntroductionComponents/TableWidgetContent";
 import PureWidgetContent from "./IntroductionComponents/PureWidgetContent";
 import logoBar from "./logobar.png";
+import aiiaImg from "./logoaiia.png";
+import ncnuImg from "./logoncnu.png";
 
 class Introduction extends Component {
   constructor() {
@@ -29,11 +31,12 @@ class Introduction extends Component {
     const tmp = [];
     const tmp2 = [];
     return (
+      <div className="introduction_bear">
       <div className="introduction">
         <div className="bulletin width_75">
+          <img src={logoBar} className="logo_bear" alt="intr"></img>
           {this.state.articles.map((article, index) => (
             <div key={index} className="article">
-              <img src={logoBar} className="width_100 logo_bear"></img>
               <Article article={article}></Article>
             </div>
           ))}
@@ -62,6 +65,13 @@ class Introduction extends Component {
             }
           ></SideWidget>
         </div>
+      </div>
+      <div className="bottom_bear">
+        <p>國立暨南國際大學資訊工程系人工智慧創新應用實驗室</p>
+        <p>NCNU Artificial Intelligence Innovation & Application Labortory</p>
+        <img src={ncnuImg} className="bottom_img" alt="ncnu"></img>
+        <img src={aiiaImg} className="bottom_img" alt="aiia"></img>
+      </div>
       </div>
     );
   }

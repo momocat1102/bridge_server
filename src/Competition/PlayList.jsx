@@ -11,6 +11,7 @@ import WinnerChooserBody from "../ModalComponents/WinnerChooserBody";
 class PlayList extends Component {
   constructor(props) {
     super(props);
+    console.log(this.props);
     this.state = {
       open_modal: false,
       open_modal_winner_chooser: false,
@@ -78,11 +79,18 @@ class PlayList extends Component {
 
   totalScore = (player1, player2) => {
     let totalScore = Object.keys(this.props.one2onescore).reduce((acc, key) => {
-      if (key.includes(player1 + "_" + player2) || key.includes(player2 + "_" + player1)) {
+      let lastUnderscoreIndex = key.lastIndexOf("_");
+      let game_id = [key.substring(0, lastUnderscoreIndex), key.substring(lastUnderscoreIndex + 1)][0];
+      if (game_id === (player1 + "_" + player2) || game_id === (player2 + "_" + player1)) {
         acc += this.props.one2onescore[key][player1];
+        if (this.props.one2onescore[key][player1] === undefined) {
+          console.log(this.props.one2onescore[key], key, player1);
+        };
+        // console.log(this.props.one2onescore[key][player1], key);
       }
       return acc;
     }, 0);
+    // console.log(totalScore);
     return totalScore;
   }
 
@@ -101,8 +109,9 @@ class PlayList extends Component {
     let game = this.props.one2onescore[game_id];
     let psid = [this.state.showBoards[0], this.state.showBoards[1]] // game_id.split('_');
     // console.log(psid)
-    let winr = game[psid[0]] > game[psid[1]] ? psid[0] : psid[1];
+    let winr = game[psid[0]] === 1 ? psid[0] : psid[1];
     // console.log(winr)
+    // return <apan>{psid[0]} {game[psid[0]]} {psid[1]} {game[psid[1]]} {this.props.record[game_id].winner}</apan>
     if (winr === this.state.showBoards[0]) {
       return <apan style={{ color: "blue"}}>已結束</apan>;
     }
@@ -197,7 +206,7 @@ class PlayList extends Component {
                     className="table_bear_hr width_30" 
                     style={{ backgroundColor: "rgb(0,139,139)" }}
                   >
-                    <img src={this.images["s" + this.imguser[player].split('_')[0] + ".png"].default} className="icon_user" style={{border: "solid 1px #" + this.imguser[player].split('_')[1]}} alt="user"></img>
+                    <img src={this.images["s" + this.imguser[player].split('_')[0] + ".png"]} className="icon_user" style={{border: "solid 1px #" + this.imguser[player].split('_')[1]}} alt="user"></img>
                     <div style={{ display: "inline-block", verticalAlign: "middle", marginLeft: "8px", color: (index === 0 ? "blue" : "red") }}>{player}</div>
                   </td>
                   <td className="table_bear_hr width_15" style={{ backgroundColor: "rgb(0,139,139)", paddingRight: (this.props.num > 10 ? "25px" : "0px") }}>Score</td>
@@ -234,7 +243,7 @@ class PlayList extends Component {
                           onClick: (e) =>
                             this.props.board_end[this.playScore(player, this.state.showBoards, id)[1]] !==
                             undefined
-                              ? this.open_modal((index === 0 ? player : this.playScore(player, this.state.showBoards, id)[0]), (index === 0 ? this.playScore(player, this.state.showBoards, id)[0] : player), (id + 1))
+                              ? this.open_modal(player, this.playScore(player, this.state.showBoards, id)[0], (id + 1))
                               : null,
                           style: { cursor: "pointer", borderStyle: "none", width: "30%" },
                           game_id: this.playScore(player, this.state.showBoards, id)[1],
@@ -249,6 +258,7 @@ class PlayList extends Component {
                               true || this.props.status === "end"
                           ? this.win_game(this.playScore(player, this.state.showBoards, id)[1]) 
                           : "(進行中)"}
+                          {/* {player}{ "  " + this.playScore(player, this.state.showBoards, id)[0]} */}
                       </ContextMenuTrigger>
                       <td key={"s_" + id + "_" + index} className="table_bear_tr1 width_15">
                         {this.playScore(player, this.state.showBoards, id)[2]}
@@ -389,7 +399,7 @@ class PlayList extends Component {
                 <td className="table_bear_tr"
                   style={{ backgroundColor: "rgb(165,212,212)" }}
                 >
-                  <img src={this.images["s" + this.imguser[player_i].split('_')[0] + ".png"].default} className="icon_user" style={{border: "solid 1px #" + this.imguser[player_i].split('_')[1]}} alt="user"></img>
+                  <img src={this.images["s" + this.imguser[player_i].split('_')[0] + ".png"]} className="icon_user" style={{border: "solid 1px #" + this.imguser[player_i].split('_')[1]}} alt="user"></img>
                 </td>
                 <td className="table_bear_tr"
                   style={{ backgroundColor: "rgb(165,212,212)" }}
