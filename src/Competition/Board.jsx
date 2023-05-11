@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import { hot } from "react-hot-loader";
 
-
 class Board extends Component {
   constructor(props) {
     super(props);
@@ -36,10 +35,10 @@ class Board extends Component {
   class_txt(type, change, first, card, id) {
     let ret = "";
     if (type === 1) {
-      ret = "btn_card zindex_" + (22 - (id > change ? id - 1 : id)).toString() + " top_" + (id === (change + 1) ? 50 : 25).toString() + " left_c" + (id > change ? id - 1 : id).toString() + (id === change ? " move_co" : (id === (change + 1) ? (first === card ? " move_ci" : " move_pi") : ""));
+      ret = "btn_card" + (id === (change + 1) && first === card ? "_change " : " ") + "zindex_" + (22 - (id > change ? id - 1 : id)).toString() + " top_" + (id === (change + 1) ? 50 : 25).toString() + " left_c" + (id > change ? id - 1 : id).toString() + (id === change ? " move_co" : (id === (change + 1) ? (first === card ? " move_ci" : " move_pi") : ""));
     }
     else if (type === 2) {
-      ret = "btn_card zindex_" + (10 + (id > change ? id - 1 : id)).toString() + " top_" + (id === (change + 1) ? 500 : 525).toString() + " left_c" + (id > change ? id - 1 : id).toString() + (id === change ? " move_po" : (id === (change + 1) ? (first === card ? " move_ci" : " move_pi") : ""));
+      ret = "btn_card" + (id === (change + 1) && first === card ? "_change " : " ") + "zindex_" + (10 + (id > change ? id - 1 : id)).toString() + " top_" + (id === (change + 1) ? 500 : 525).toString() + " left_c" + (id > change ? id - 1 : id).toString() + (id === change ? " move_po" : (id === (change + 1) ? (first === card ? " move_ci" : " move_pi") : ""));
     }
     else if (type === 3) {
       ret = (first !== 0 && id === change[0].length - 1) ? "btn_card zindex_10 top_240 left_c8 move_ns" : "btn_card zindex_" + (22 - id).toString() + " top_25 left_c" + id.toString() + (id === change[1] ? " move_co" : "");
@@ -263,6 +262,16 @@ class Board extends Component {
               <br/>
               <p className="txt_st">{"Time: " + record.call[this.state.callIndex].time_limit.p2}</p>
             </div>
+			<div className={"zindex_22 div_trump top_" + (record.dealer === p1 ? 10 : 365).toString() + " left_1260 " + (this.state.callIndex === record.call.length - 1 ? "visable_v" : "visable_h")}>
+              <img src={this.images["t" + record.trump[0].toString() + ".png"]} className="img_trump1" alt="card"></img>
+              <img src={this.images["t" + btn_trump[2][record.trump[1]].toString() + ".png"]} className="img_trump" alt="card"></img>
+            </div>
+            <div className={"zindex_22 top_135 left_1390"}>
+              <img src={this.images[(record.call[this.state.callIndex].player === p1 ? "bid" : "PZ") + ".png"]} alt="card"></img>
+            </div>
+            <div className={"zindex_22 top_490 left_1390"}>
+              <img src={this.images[(record.call[this.state.callIndex].player === p2 ? "bid" : "PZ") + ".png"]} alt="card"></img>
+            </div>																																														   
           </>
         }
       </div>

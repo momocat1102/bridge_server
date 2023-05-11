@@ -1028,6 +1028,7 @@ td {
     border-radius: 10px;
     margin: 1rem 0 0 2rem;
     width: calc(100% - 4rem);
+    border: 1px solid #B9B9B9;
 }
 .bottom_bear {
     background-color: #50585D;
@@ -1062,6 +1063,15 @@ td {
     filter: brightness(.7);
     border-radius: 18px;
     height: 175px;
+}
+.btn_card_change {
+    border-style: none;
+    background-color: transparent;
+    border: 3px solid yellow;
+    border-radius: 22px;
+    height: 190px;
+    margin: 0;
+    padding: 0;
 }
 .img_card {
     width: 136px;
@@ -1304,6 +1314,12 @@ td {
 .txt_st1 {
     word-wrap:break-word;
     font-size: 14px;
+}
+.visable_h {
+    visibility: hidden;
+}
+.visable_v {
+    visibility: visible;
 }
 
 .div_user {
